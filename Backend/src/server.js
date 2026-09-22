@@ -10,6 +10,7 @@ import { connectDB } from './config/db.js';
 import userRoutes from './routes/user.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import profileRoutes from './routes/profile.routes.js';
+import Friendrequestrouter from './routes/friendrequst.routes.js';
 
 
 
@@ -51,6 +52,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/friendrequest', Friendrequestrouter);
 
 
 

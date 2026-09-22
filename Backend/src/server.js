@@ -9,7 +9,7 @@ import { connectDB } from './config/db.js';
 // import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.routes.js';
 import authRoutes from './routes/auth.routes.js';
-
+import profileRoutes from './routes/profile.routes.js';
 
 
 
@@ -49,7 +49,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes...
 app.use('/api/auth', authRoutes);
-app.use('/api', userRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/profile', profileRoutes);
 
 
 
@@ -79,7 +80,7 @@ app.use((err, _req, res, _next) => {
 
 
 // Start Server...
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 connectDB().then(() => {
   app.listen(PORT, () => {

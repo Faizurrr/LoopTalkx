@@ -1,13 +1,14 @@
 import express from 'express';
-import { getAllUsers, getUserById, updateProfile } from '../controllers/user.controller.js';
+import { getAllUsers , getMe , getRecommendedFriends } from '../controllers/user.controller.js';
 import { protect } from '../middlewares/auth.middleware.js';
 
-const router = express.Router();
+const userRoutes = express.Router();
 
-router.use(protect); // All user routes are protected
+userRoutes.use(protect); // All user routes are protected
 
-router.get('/', getAllUsers);
-router.get('/:id', getUserById);
-router.put('/profile', updateProfile);
+userRoutes.get('/me', getMe); // for getting the current logged-in user's profile..
+userRoutes.get('/allusers', getAllUsers);
+userRoutes.get('/Recommendedfriends', getRecommendedFriends); // for getting the current logged-in user's profile..
 
-export default router;
+
+export default userRoutes;

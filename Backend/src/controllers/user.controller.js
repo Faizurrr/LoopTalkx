@@ -1,37 +1,85 @@
-import User from '../models/user.model.js';
+import User from '../models/user.model.js'
 
-// ─── Get all users (excluding current) ────────────────────────────────────────
+
+
+  // ─── Get all users ───
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({ _id: { $ne: req.user.id } }).select('-password');
-    res.json({ success: true, users });
+    const users = await User.find({}, { password: 0 }); // Exclude password from the response
+    res.json({
+      success: true,
+      users,
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Error fetching users:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 };
+  
+ 
 
-// ─── Get user by ID ───────────────────────────────────────────────────────────
-export const getUserById = async (req, res) => {
+   // get me (current logged in user/profile)
+export const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select('-password');
-    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    const user = await User.findById(req.user.id);
     res.json({ success: true, user });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// ─── Update profile ───────────────────────────────────────────────────────────
-export const updateProfile = async (req, res) => {
+
+
+
+ // ─── Get recommended friends on this basis of native language and learning language and thier city..
+export const getRecommendedFriends = async (req, res) => {
   try {
-    const { username, bio, avatar } = req.body;
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      { username, bio, avatar },
-      { new: true, runValidators: true }
-    ).select('-password');
-    res.json({ success: true, user });
+    const currentUserId = req.user._id || req.user.id;
+
+    // Fetch the current user's details
+    const currentUser = await User.findById(currentUserId);
+
+    if (!currentUser) {
+      return res.status(404).json({ success: false, message: 'Current user not found' });
+    }
+
+    const { NativeLanguage, LearningLanguage, city } = currentUser;
+
+    
+    let recommendedFriends = await User.find({
+      _id: { $ne: currentUserId }, // Exclude current user
+      NativeLanguage: LearningLanguage, // Match their native with your learning
+      LearningLanguage: NativeLanguage, // Match their learning with your native
+    }).select('-password');
+
+    // 2. Fallback: If no direct swap matches, find users learning the same language or in the same city
+    if (recommendedFriends.length === 0) {
+      recommendedFriends = await User.find({
+        _id: { $ne: currentUserId },
+        $or: [
+          { NativeLanguage: LearningLanguage },
+          { LearningLanguage: NativeLanguage },
+          { city: city }
+        ]
+      })
+      .limit(10)
+      .select('-password');
+    }
+
+    return res.status(200).json({
+      success: true,
+      count: recommendedFriends.length,
+      data: recommendedFriends,
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error('Error fetching recommended friends:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to fetch recommendations',
+      error: error.message,
+    });
   }
 };

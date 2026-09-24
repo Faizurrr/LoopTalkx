@@ -34,16 +34,16 @@ const userSchema = new mongoose.Schema(
     },
     NativeLanguage: {
       type: String,
-      default: 'English',
+      default: '',
     },
     LearningLanguage: {
       type: String,
-      default: 'English',
+      default: '',
     },
 
     city:{
       type: String,
-      default: 'London',
+      default: '',
     },
     
     isOnline: {

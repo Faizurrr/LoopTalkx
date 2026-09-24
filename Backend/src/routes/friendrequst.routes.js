@@ -1,5 +1,5 @@
 import express from "express";
-import { sendFriendRequest , acceptFriendRequest , rejectFriendRequest } from "../controllers/friendrequest.controllers.js";   
+import { sendFriendRequest , acceptFriendRequest , rejectFriendRequest , getFriendRequests } from "../controllers/friendrequest.controllers.js";   
  import { protect } from "../middlewares/auth.middleware.js"; 
 
 const Friendrequestrouter = express.Router();

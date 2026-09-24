@@ -178,3 +178,36 @@ export const rejectFriendRequest = async (req, res) => {
     });
   }
 };
+
+
+
+
+// Get all pending friend requests for the logged-in user
+export const getFriendRequests = async (req, res) => {
+  try {
+    const currentUserId = req.user._id || req.user.id; // Logged-in user ID from protect middleware
+
+    // Step 1: Find all pending requests sent to the logged-in user
+    const friendRequests = await FriendRequest.find({
+      receiver: currentUserId,
+      status: 'pending',
+    }).populate(
+      'sender',
+      'username email avatar bio NativeLanguage LearningLanguage city isOnline'
+    );
+
+    // Step 2: Return response
+    return res.status(200).json({
+      success: true,
+      count: friendRequests.length,
+      data: friendRequests,
+    });
+  } catch (error) {
+    console.error('Error fetching friend requests:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error while fetching friend requests.',
+      error: error.message,
+    });
+  }
+};     

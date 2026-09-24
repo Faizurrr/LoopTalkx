@@ -1,134 +1,248 @@
-import React, { useState } from 'react';
-import { Camera, Mail, User } from 'lucide-react';
-// Feel free to uncomment this line if your asset exists locally:
-// import Profile_pic from '../assets/Profile_pic.png';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Camera, Mail, User, MapPin, Languages, CalendarDays } from "lucide-react";
 
-function Profile() {
-  // Frontend Mock States to replace the backend store
-  const [isUploadingProfile, setIsUploadingProfile] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5003";
+const PROFILE_URL = `${backendUrl}/api/auth/me`;
+const UPDATE_URL = `${backendUrl}/api/profile/CompleteProfile`; // this url is for updating the profile picture jo onbording route hai 
 
-  // Mocked user profile data for immediate visual render
-  const [user, setUser] = useState({
-    fullname: "Alex Mercer",
-    email: "alex.mercer@looptalk.com",
-    profile_pic: null, // Set to a URL string if you have a default image link
-    createdAt: "2024-03-15T08:30:00.000Z"
-  });
+const newAvatar = () =>
+  `https://api.dicebear.com/9.x/avataaars/svg?seed=${Math.random()
+    .toString(36)
+    .slice(2, 10)}`;
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) {
-      console.log("No file selected");
-      return;
-    }
-
-    // Generate a temporary local URL for visual feedback inside the browser
-    const previewURL = URL.createObjectURL(file);
-    setSelectedImage(previewURL);
-
-    // Simulate an uploading visual delay loop
-    setIsUploadingProfile(true);
-    setTimeout(() => {
-      setIsUploadingProfile(false);
-      console.log("Mock upload successful!");
-    }, 1500);
+const authHeaders = () => {  // basically a helper fn ... 
+  const token = localStorage.getItem("token");
+  return {
+    "Content-Type": "application/json",
+    ...(token && { Authorization: `Bearer ${token}` }),
   };
+};
 
+// Read-only detail row: icon badge + small label + value (no input-like box)
+function InfoRow({ icon: Icon, label, children }) {
   return (
-    <div className='min-h-screen pt-20 bg-slate-50 text-slate-800'>
-      <div className='max-w-3xl mx-auto p-4 py-8'>
-        <div className="bg-white border border-slate-200 shadow-sm rounded-xl p-8 space-y-8">
-          
-          <div className='text-center'>
-            <h1 className='text-2xl font-semibold text-slate-900'>Profile</h1>
-            <p className='mt-2 text-slate-500'>Your profile information</p>
-          </div>
-
-          {/* Profile pic section */}
-          <div className='items-center gap-4 flex flex-col'>
-            <div className='relative'>
-              <img
-                src={selectedImage || user.profile_pic || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"}
-                alt='profilepic'
-                className='rounded-full border-4 border-slate-100 object-cover w-40 h-40 shadow-inner'
-              />
-              <label
-                htmlFor="avatar-upload"
-                className={`
-                  absolute bottom-0 right-0 
-                  bg-slate-900 hover:bg-slate-800 hover:scale-110
-                  p-2.5 rounded-full cursor-pointer 
-                  shadow-md transition-all duration-200
-                  ${isUploadingProfile ? "animate-pulse pointer-events-none opacity-50" : ""}
-                `}
-              >
-                <Camera className="w-5 h-5 text-white" />
-                <input
-                  type="file"
-                  id="avatar-upload"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={isUploadingProfile}
-                />
-              </label>
-            </div>
-            <p className='text-sm text-slate-500 font-medium'>
-              {isUploadingProfile ? "Uploading your profile..." : "Click on camera to update your profile."}
-            </p>
-          </div>
-
-          {/* Info Section */}
-          <div className='space-y-6'>
-            <div className='space-y-1.5'>
-              <div className='flex items-center gap-2 text-sm font-semibold text-slate-600'>
-                <User className='w-4 h-4 text-slate-400' />
-                Full Name
-              </div>
-              <p className='border border-slate-200 rounded-xl py-2.5 px-5 bg-slate-50 text-slate-700 font-medium'>
-                {user.fullname}
-              </p>
-            </div>
-
-            <div className='space-y-1.5'>
-              <div className='flex items-center gap-2 text-sm font-semibold text-slate-600'>
-                <Mail className='w-4 h-4 text-slate-400' />
-                Email Address
-              </div>
-              <p className='border border-slate-200 rounded-xl py-2.5 px-5 bg-slate-50 text-slate-700 font-medium'>
-                {user.email}
-              </p>
-            </div>
-          </div>
-
-          {/* Meta Account Details */}
-          <div className='mt-6 bg-slate-50 border border-slate-100 rounded-xl p-6'>
-            <h2 className='text-base font-semibold text-slate-900 mb-4'>Account Information</h2>
-            <div className='space-y-3 text-sm font-medium text-slate-600'>
-              <div className='flex items-center justify-between py-2 border-b border-slate-200'>
-                <span>Member Since</span>
-                <span className='text-slate-900'>
-                  {new Date(user.createdAt).toLocaleDateString("en-GB", {
-                    day: "numeric", 
-                    month: "short", 
-                    year: "numeric"
-                  })}
-                </span>
-              </div>
-              <div className="flex items-center justify-between py-2">
-                <span>Account Status</span>
-                <span className="text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full text-xs font-semibold">
-                  Active
-                </span>
-              </div>
-            </div>
-          </div>
-
-        </div>
+    <div className="flex items-center gap-4 py-4">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#d9b26a]/10 text-[#d9b26a]">
+        <Icon className="h-5 w-5" aria-hidden="true" />
+      </div>
+      <div className="min-w-0">
+        <p className="text-xs font-medium text-[#8f8596]">{label}</p>
+        <div className="truncate text-base text-[#f3ecf5]">{children}</div>
       </div>
     </div>
   );
 }
 
-export default Profile;
+function ProfileSkeleton() {
+  return (
+    <div className="animate-pulse space-y-6" aria-busy="true">
+      <div className="mx-auto h-36 w-36 rounded-full bg-[#2c2230]" />
+      <div className="mx-auto h-6 w-48 rounded bg-[#2c2230]" />
+      <div className="h-14 rounded-lg bg-[#241a2a]" />
+      <div className="h-14 rounded-lg bg-[#241a2a]" />
+      <div className="h-24 rounded-lg bg-[#241a2a]" />
+    </div>
+  );
+}
+
+export default function Profile() {
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [updatingAvatar, setUpdatingAvatar] = useState(false);
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const response = await fetch(PROFILE_URL, {
+          method: "GET",
+          headers: authHeaders(),
+          credentials: "include",
+        });
+
+        if (response.status === 401) { // unuthorized, banda agr hai toh 
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          navigate("/login", { replace: true });
+          return;
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.message || data?.detail || "Failed to load profile");
+        }
+
+        setUser(data.user || data);
+      } catch (err) {
+        setError(err.message || "Failed to load profile");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, [navigate]);
+
+  const handleNewAvatar = async () => {
+    const avatar = newAvatar();
+
+    try {
+      setUpdatingAvatar(true);
+
+      const response = await fetch(UPDATE_URL, {
+        method: "POST",
+        headers: authHeaders(),
+        credentials: "include",
+        body: JSON.stringify({ avatar }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.message || data?.detail || "Could not update avatar");
+      }
+
+      const updated = data.user || { ...user, avatar };
+      setUser(updated);
+
+      try {
+        const stored = JSON.parse(localStorage.getItem("user")) || {};
+        localStorage.setItem("user", JSON.stringify({ ...stored, avatar: updated.avatar }));
+      } catch {
+        localStorage.setItem("user", JSON.stringify(updated));
+      }
+
+      toast.success("Profile picture updated!");
+    } catch (err) {
+      toast.error(err.message || "Could not update avatar");
+    } finally {
+      setUpdatingAvatar(false);
+    }
+  };
+
+  const memberSince = user?.createdAt
+    ? new Date(user.createdAt).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : "—";
+
+  const displayName = user?.fullName || user?.username || "";
+
+  return (
+    <div className="min-h-screen bg-[#150f18] px-4 pb-10 pt-20 text-[#f3ecf5]">
+      <div className="mx-auto w-full max-w-2xl overflow-hidden rounded-2xl border border-[#2c2230] bg-[#1b1320] shadow-lg shadow-black/30">
+        {/* Cover banner */}
+        <div className="h-28 bg-gradient-to-r from-[#3a2648] via-[#2b1d36] to-[#4a3520] sm:h-32" />
+
+        {loading && (
+          <div className="p-6 sm:p-10">
+            <ProfileSkeleton />
+          </div>
+        )}
+
+        {!loading && error && (
+          <div className="p-6 sm:p-10">
+            <div
+              role="alert"
+              className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300"
+            >
+              {error}
+            </div>
+          </div>
+        )}
+
+        {!loading && user && (
+          <div className="px-6 pb-8 sm:px-10">
+            {/* Avatar overlaps the banner */}
+            <div className="-mt-16 flex flex-col items-center gap-3 text-center sm:-mt-20">
+              <div className="relative">
+                <img
+                  src={
+                    user.avatar ||
+                    `https://api.dicebear.com/9.x/avataaars/svg?seed=${user.username || "user"}`
+                  }
+                  alt={`${displayName || "User"} avatar`}
+                  className="h-32 w-32 rounded-full border-4 border-[#1b1320] bg-[#2c2230] object-cover ring-2 ring-[#d9b26a]/60 sm:h-36 sm:w-36"
+                />
+                <button
+                  type="button"
+                  onClick={handleNewAvatar}
+                  disabled={updatingAvatar}
+                  aria-label="Generate a new profile picture"
+                  className={`absolute bottom-1 right-1 rounded-full bg-[#d9b26a] p-2.5 text-[#1b1320] shadow-md transition hover:bg-[#e6c485] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d9b26a] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1b1320] disabled:opacity-50 ${
+                    updatingAvatar ? "animate-pulse" : ""
+                  }`}
+                >
+                  <Camera className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight text-[#f3ecf5]">
+                  {displayName}
+                </h1>
+                {user.username && user.fullName && (
+                  <p className="text-sm text-[#d9b26a]">@{user.username}</p>
+                )}
+              </div>
+
+              {user.bio && (
+                <p className="max-w-md text-sm leading-relaxed text-[#b9aec0]">{user.bio}</p>
+              )}
+
+              <p className="text-xs text-[#8f8596]">
+                {updatingAvatar
+                  ? "Updating your picture..."
+                  : "Tap the camera to get a new random avatar"}
+              </p>
+            </div>
+
+            {/* Language chips */}
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <span className="inline-flex items-center gap-2 rounded-full border border-[#d9b26a]/30 bg-[#d9b26a]/10 px-4 py-1.5 text-sm text-[#e6c485]">
+                <Languages className="h-4 w-4" aria-hidden="true" />
+                Speaks {user.NativeLanguage || "—"}
+              </span>
+              <span className="inline-flex items-center gap-2 rounded-full border border-violet-400/30 bg-violet-400/10 px-4 py-1.5 text-sm text-violet-300">
+                <Languages className="h-4 w-4" aria-hidden="true" />
+                Learning {user.LearningLanguage || "—"}
+              </span>
+            </div>
+
+            {/* Details list */}
+            <div className="mt-8 divide-y divide-[#2c2230] border-y border-[#2c2230]">
+              <InfoRow icon={User} label="Username">
+                {user.username || "—"}
+              </InfoRow>
+              <InfoRow icon={Mail} label="Email">
+                {user.email || "—"}
+              </InfoRow>
+              <InfoRow icon={MapPin} label="Location">
+                {user.city || "—"}
+              </InfoRow>
+              <InfoRow icon={CalendarDays} label="Member since">
+                {memberSince}
+              </InfoRow>
+            </div>
+
+            {/* Account status */}
+            <div className="mt-6 flex items-center justify-between rounded-xl bg-[#241a2a] px-5 py-4">
+              <span className="text-sm text-[#b9aec0]">Account status</span>
+              <span className="inline-flex items-center gap-2 text-sm font-medium text-emerald-300">
+                <span className="h-2 w-2 rounded-full bg-emerald-400" aria-hidden="true" />
+                Active
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

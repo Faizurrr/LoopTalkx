@@ -2,15 +2,27 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Camera, Mail, User, MapPin, Languages, CalendarDays } from "lucide-react";
+import SideBar from "../Components/Common/SideBar";
+import OnBoardingPage from "./OnBoardingPage";
+
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5003";
-const PROFILE_URL = `${backendUrl}/api/auth/me`;
+const PROFILE_URL = `${backendUrl}/api/users/me`;
 const UPDATE_URL = `${backendUrl}/api/profile/CompleteProfile`; // this url is for updating the profile picture jo onbording route hai 
+
+
+
 
 const newAvatar = () =>
   `https://api.dicebear.com/9.x/avataaars/svg?seed=${Math.random()
     .toString(36)
     .slice(2, 10)}`;
+
+
+
+
+
+
 
 const authHeaders = () => {  // basically a helper fn ... 
   const token = localStorage.getItem("token");
@@ -20,9 +32,13 @@ const authHeaders = () => {  // basically a helper fn ...
   };
 };
 
+
+
+
 // Read-only detail row: icon badge + small label + value (no input-like box)
 function InfoRow({ icon: Icon, label, children }) {
   return (
+   
     <div className="flex items-center gap-4 py-4">
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#d9b26a]/10 text-[#d9b26a]">
         <Icon className="h-5 w-5" aria-hidden="true" />
@@ -34,6 +50,11 @@ function InfoRow({ icon: Icon, label, children }) {
     </div>
   );
 }
+   
+
+
+
+
 
 function ProfileSkeleton() {
   return (
@@ -49,6 +70,10 @@ function ProfileSkeleton() {
 
 export default function Profile() {
   const navigate = useNavigate();
+
+  const handleEditProfile = () => {
+    navigate("/onBoarding");
+  };
 
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -135,8 +160,16 @@ export default function Profile() {
 
   const displayName = user?.fullName || user?.username || "";
 
+
+
+
+
+
+
   return (
-    <div className="min-h-screen bg-[#150f18] px-4 pb-10 pt-20 text-[#f3ecf5]">
+    <div className="flex min-h-screen bg-[#150f18] text-[#f3ecf5]">
+      <SideBar />
+      <div className="flex-1 px-4 pb-10 pt-20">
       <div className="mx-auto w-full max-w-2xl overflow-hidden rounded-2xl border border-[#2c2230] bg-[#1b1320] shadow-lg shadow-black/30">
         {/* Cover banner */}
         <div className="h-28 bg-gradient-to-r from-[#3a2648] via-[#2b1d36] to-[#4a3520] sm:h-32" />
@@ -239,9 +272,17 @@ export default function Profile() {
                 <span className="h-2 w-2 rounded-full bg-emerald-400" aria-hidden="true" />
                 Active
               </span>
+              <button
+                type="button"
+                onClick={handleEditProfile}
+                className="rounded-lg bg-[#d9b26a] px-4 py-2 text-xs font-semibold text-[#1b1320] transition hover:bg-[#e6c485]"
+              >
+                Edit Profile
+              </button>
             </div>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

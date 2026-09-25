@@ -66,11 +66,10 @@ export default function RegisterPage() {
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      window.dispatchEvent(new Event("auth-change"));
 
       toast.success("User registered successfully!");
-      setTimeout(() => {
-        navigate("/onBoarding");
-      }, 1500);
+      navigate("/onBoarding");
     } catch (err) {
       setError(err.message || "Registration failed");
     } finally {

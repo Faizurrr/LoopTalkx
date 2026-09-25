@@ -1,11 +1,14 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
 
-// ─── Generate JWT ──────────────────────────────────────────────────────────────
+
 const generateToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-// ─── Register ─────────────────────────────────────────────────────────────────
+
+
+
+   // register...
 export const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -22,17 +25,30 @@ export const register = async (req, res) => {
     const user = await User.create({ username, email, password });
     const token = generateToken(user._id);
 
+    const isOnboarded = Boolean(user.NativeLanguage && user.LearningLanguage);
+
     res.status(201).json({
       success: true,
       token,
-      user: { id: user._id, username: user.username, email: user.email, avatar: user.avatar },
+      user: {
+        id: user._id,
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar || '',
+        bio: user.bio || '',
+        NativeLanguage: user.NativeLanguage || '',
+        LearningLanguage: user.LearningLanguage || '',
+        city: user.city || '',
+        isOnboarded,
+      },
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// ─── Login ────────────────────────────────────────────────────────────────────
+// ─── Login 
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -48,22 +64,28 @@ export const login = async (req, res) => {
 
     const token = generateToken(user._id);
 
+    const isOnboarded = Boolean(user.NativeLanguage && user.LearningLanguage);
+
     res.json({
       success: true,
       token,
-      user: { id: user._id, username: user.username, email: user.email, avatar: user.avatar },
+      user: {
+        id: user._id,
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar || '',
+        bio: user.bio || '',
+        NativeLanguage: user.NativeLanguage || '',
+        LearningLanguage: user.LearningLanguage || '',
+        city: user.city || '',
+        isOnboarded,
+      },
     });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
-// ─── Get current user ─────────────────────────────────────────────────────────
-export const getMe = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    res.json({ success: true, user });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
+
+

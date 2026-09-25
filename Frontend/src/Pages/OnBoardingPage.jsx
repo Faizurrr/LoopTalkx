@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 const backendUrl = import.meta.env.BACKEND_URL || "http://localhost:5003";
@@ -150,6 +150,25 @@ export default function OnBoardingPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    try {
+      const rawUser = localStorage.getItem("user");
+      if (rawUser) {
+        const user = JSON.parse(rawUser);
+        setFormData({
+          fullName: user.fullName || user.username || "",
+          bio: user.bio || "",
+          NativeLanguage: user.NativeLanguage || "",
+          LearningLanguage: user.LearningLanguage || "",
+          city: user.city || "",
+          avatar: user.avatar || newAvatar(),
+        });
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -215,6 +234,9 @@ export default function OnBoardingPage() {
         "user",
         JSON.stringify({ ...storedUser, ...(data.user || {}), isOnboarded: true })
       );
+
+      // Notify App to re-read auth state
+      window.dispatchEvent(new Event("auth-change"));
 
       toast.success("Profile completed successfully!");
       navigate("/");

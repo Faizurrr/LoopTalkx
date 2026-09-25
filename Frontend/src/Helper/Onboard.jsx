@@ -10,8 +10,13 @@ export const isOnboarded = () => {
     // 2. Parse JSON safely
     const user = JSON.parse(rawUser);
 
-    // 3. Return true only if user object exists and onboarded flag is strictly true
-    return Boolean(user && (user.onboarded === true || user.isOnboarded === true));
+    // 3. Return true if onboarded flag is true OR if profile languages are set
+    return Boolean(
+      user &&
+      (user.isOnboarded === true ||
+       user.onboarded === true ||
+       Boolean(user.NativeLanguage && user.LearningLanguage))
+    );
   } catch (error) {
     console.error("Failed to parse user from localStorage:", error);
     // Remove corrupted data to prevent future errors

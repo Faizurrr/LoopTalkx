@@ -63,11 +63,15 @@ export default function LoginPage() {
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      window.dispatchEvent(new Event("auth-change"));
 
-      toast.success("Login successful! Redirecting...");
-      setTimeout(() => {
-        navigate("/onBoarding");
-      }, 3000);
+      toast.success("Login successful!");
+      const onboarded = Boolean(
+        data.user?.onboarded ||
+        data.user?.isOnboarded ||
+        Boolean(data.user?.NativeLanguage && data.user?.LearningLanguage)
+      );
+      navigate(onboarded ? "/" : "/onBoarding");
     } catch (err) {
       setError(err.message || "Login failed");
       setLoading(false);

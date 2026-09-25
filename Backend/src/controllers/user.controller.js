@@ -51,8 +51,8 @@ export const getRecommendedFriends = async (req, res) => {
     
     let recommendedFriends = await User.find({
       _id: { $ne: currentUserId }, // Exclude current user
-      NativeLanguage: LearningLanguage, // Match their native with your learning
-      LearningLanguage: NativeLanguage, // Match their learning with your native
+      NativeLanguage: LearningLanguage, 
+      LearningLanguage: NativeLanguage, 
     }).select('-password');
 
     // 2. Fallback: If no direct swap matches, find users learning the same language or in the same city

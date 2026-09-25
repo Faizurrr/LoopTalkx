@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Disclosure,
   Menu,
@@ -6,13 +7,15 @@ import {
   MenuItem,
   MenuItems,
 } from "@headlessui/react";
+import { ShipWheel } from "lucide-react";
 import { Bell, ChevronDown, LogOut } from "lucide-react";
 import SearchBar from "../Layout/SearchBar";
 import { toast } from "react-toastify";
 
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5003";
-const PROFILE_URL = `${backendUrl}/api/auth/me`;
+const PROFILE_URL = `${backendUrl}/api/users/me`;
+
 
 const DEFAULT_AVATAR =
   "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80";
@@ -59,29 +62,33 @@ export default function Navbar() {
 
  
      
-   // logout function to clear local storage and redirect to login page... 
+  // logout function to clear local storage and redirect to login page... 
   const handleSignOut = () => {
-  if (window.confirm("Are you sure you want to sign out?")) {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    toast.success("Signed out successfully!");
-    window.location.href = "/login";
-  }
-};
+    if (window.confirm("Are you sure you want to sign out?")) {
+      localStorage.removeItem("token");
+     
+      window.dispatchEvent(new Event("auth-change"));
+      toast.success("Signed out successfully!");
+      window.location.href = "/login";
+    }
+  };
    
   return (
     <Disclosure
-      as="header"
-      className="sticky top-0 z-30 flex h-16 items-center border-b border-base-300 bg-base-200"
+    as="header"
+      className="sticky top-0 z-30 flex h-16 items-center border-b border-white/10  bg-[#181116] "
     >
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">    
         <div className="flex w-full items-center justify-between gap-4">
           {/* Left Side: Logo */}
           <div className="flex items-center gap-2.5">
           
-            <h1 className="bg-gradient-to-r from-primary to-secondary bg-clip-text font-mono text-3xl font-bold tracking-wider text-transparent bg-[#D98A4B]">
-              LoopTalk
-            </h1>
+          <div className="flex items-center gap-2 px-2 text-[#e39a5c]">
+                  <ShipWheel className="w-6 h-6 stroke-[2.2]" />
+                  <span className="text-xl font-bold tracking-wide text-[#e39a5c]">
+                    LoopTalk
+                  </span>
+                </div>
           </div>
 
           {/* Right Side: Search Bar + Actions */}
@@ -111,12 +118,12 @@ export default function Navbar() {
               >
                 {userLinks.map((item) => (
                   <MenuItem key={item.label}>
-                    <a
-                      href={item.href}
+                    <Link
+                      to={item.href}
                       className="block rounded-lg px-4 py-2 text-sm text-base-content transition data-focus:bg-base-300"
                     >
                       {item.label}
-                    </a>
+                    </Link>
                   </MenuItem>
                 ))}
 

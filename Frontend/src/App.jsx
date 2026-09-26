@@ -11,7 +11,7 @@ import OnBoardingPage from "./Pages/OnBoardingPage";
 import { isAuthenticated } from "./Helper/Auth.jsx";
 import { isOnboarded } from "./Helper/Onboard.jsx";
 import Notifications from "./Pages/Notifications.jsx";
-
+import Friends from "./Pages/Friends.jsx" ;
 
    // logic of conditional routing..
 
@@ -105,6 +105,18 @@ function AppRoutes() {
       <Route path="notification" element ={
          <ProtectedRoute>
               <Notifications />
+         </ProtectedRoute>
+      }
+/>
+<Route path="notification" element ={
+         <ProtectedRoute>
+              <Notifications />
+         </ProtectedRoute>
+      }
+/>
+   < Route path="friends" element ={
+         <ProtectedRoute>
+              <Friends />
          </ProtectedRoute>
       }
 />

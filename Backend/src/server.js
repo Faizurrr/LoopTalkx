@@ -11,7 +11,7 @@ import userRoutes from './routes/user.routes.js';
 import authRoutes from './routes/auth.routes.js';
 import profileRoutes from './routes/profile.routes.js';
 import Friendrequestrouter from './routes/friendrequst.routes.js';
-
+import Friendrouter from './routes/friendlist.routes.js';
 
 
 
@@ -30,7 +30,7 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 const app = express();
 // home route
 app.get('/', (_req, res) => {
-  Console.log('Server is running');
+  console.log('Server is running');
   res.send('Server is running');
 });
 
@@ -53,7 +53,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/friendrequest', Friendrequestrouter);
-
+app.use('/api/friendslist', Friendrouter);
 
 
 

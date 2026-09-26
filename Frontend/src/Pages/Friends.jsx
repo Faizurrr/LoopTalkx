@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import SideBar from "../Components/Common/SideBar";
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5003";
 
 // Small helper to turn a language name into a flag emoji for the pills
@@ -25,7 +25,8 @@ const getFlag = (language) => {
   return LANGUAGE_FLAGS[language.toLowerCase()] || "🌐";
 };
 
-function HeroSection() {
+function Friends() {
+    
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -61,7 +62,11 @@ function HeroSection() {
   }, []);
 
   return (
-    <div className="px-10 py-8">
+
+      <div className="flex min-h-screen bg-[#0f0b12] text-slate-100">
+          <SideBar />
+    <div className="px-10   py-8">
+           
       <h1 className="text-2xl font-bold text-amber-200 mb-6">Your Friends</h1>
 
       {loading && <p className="text-slate-400 text-sm">Loading friends…</p>}
@@ -104,7 +109,8 @@ function HeroSection() {
         ))}
       </div>
     </div>
+    </div>
   );
 }
 
-export default HeroSection;
+export default Friends;

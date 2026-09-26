@@ -1,22 +1,20 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { IoLogoInstagram } from "react-icons/io";
 import { RiTwitterXLine } from "react-icons/ri";
 import { TbBrandMeta } from "react-icons/tb";
 import { FiPhoneCall } from "react-icons/fi";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa";
-import { ToastContainer, toast } from "react-toastify";
-
+import { ToastContainer } from "react-toastify";
 
 const Footer = () => {
- 
   return (
-    <footer className="border-t border-white/10 bg-slate-950 text-slate-300">
+    <footer className="border-t border-white/10 bg-[#181116] text-slate-300">
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-4">
           <div>
-            <h3 className="mb-4 text-lg font-semibold text-white">LoopTalk</h3>
+            <h3 className="mb-4 text-lg font-semibold text-[#9e8f98]">LoopTalk</h3>
             <p className="mb-4 text-sm leading-6 text-slate-400">
               Real-time video, instant chat, and AI-powered Second Brain in one connected workspace.
             </p>
@@ -26,7 +24,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="mb-4 text-lg font-semibold text-white">Product</h3>
+            <h3 className="mb-4 text-lg font-semibold text-[#9e8f98]">Product</h3>
             <ul className="space-y-2 text-sm text-slate-400">
               <li><Link to="/chat" className="transition hover:text-white">Chat</Link></li>
               <li><Link to="/rooms" className="transition hover:text-white">Rooms</Link></li>
@@ -36,7 +34,7 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="mb-4 text-lg font-semibold text-white">Resources</h3>
+            <h3 className="mb-4 text-lg font-semibold text-[#9e8f98]">Resources</h3>
             <ul className="space-y-2 text-sm text-slate-400">
               <li><Link to="/about" className="transition hover:text-white">About</Link></li>
               <li><Link to="/docs" className="transition hover:text-white">Docs</Link></li>
@@ -46,35 +44,31 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="mb-4 text-lg font-semibold text-white">Updates</h3>
+            <h3 className="mb-4 text-lg font-semibold text-[#9e8f98]">Updates</h3>
             <p className="mb-4 text-sm text-slate-400">
               Get product updates and release notes.
             </p>
 
-           
-
-            
-
             <div className="mb-4 flex items-center gap-4">
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="transition hover:text-[#E09F5A]">
                 <FaGithub className="h-5 w-5" />
               </a>
-              <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
+              <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" className="transition hover:text-[#E09F5A]">
                 <FaLinkedinIn className="h-5 w-5" />
               </a>
-              <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
+              <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="transition hover:text-[#E09F5A]">
                 <TbBrandMeta className="h-5 w-5" />
               </a>
-              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
+              <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="transition hover:text-[#E09F5A]">
                 <IoLogoInstagram className="h-5 w-5" />
               </a>
-              <a href="https://www.x.com" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
+              <a href="https://www.x.com" target="_blank" rel="noopener noreferrer" className="transition hover:text-[#E09F5A]">
                 <RiTwitterXLine className="h-4 w-4" />
               </a>
             </div>
 
             <p className="text-sm text-slate-300">
-              <FiPhoneCall className="mr-2 inline-block" />
+              <FiPhoneCall className="mr-2 inline-block text-[#9e8f98]" />
               +91 12345 67890
             </p>
           </div>

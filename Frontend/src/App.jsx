@@ -1,3 +1,4 @@
+   // import all required page ... 
 import React, { useState, useEffect } from "react";
 import { Routes, Route, BrowserRouter, Navigate, useLocation } from "react-router-dom";
 import Home from './Pages/Home';
@@ -7,9 +8,12 @@ import RegisterPage from "./Pages/register";
 import LoginPage from "./Pages/login";
 import ProfilePage from "./Pages/Profile";
 import OnBoardingPage from "./Pages/OnBoardingPage";
-
 import { isAuthenticated } from "./Helper/Auth.jsx";
 import { isOnboarded } from "./Helper/Onboard.jsx";
+import Notifications from "./Pages/Notifications.jsx";
+
+
+   // logic of conditional routing..
 
 // Route guard for pages requiring login AND completed onboarding (Home, Profile, etc.)
 function ProtectedRoute({ children }) {
@@ -95,6 +99,15 @@ function AppRoutes() {
         }
       />
       <Route path="/Profile" element={<Navigate to="/profile" replace />} />
+
+
+
+      <Route path="notification" element ={
+         <ProtectedRoute>
+              <Notifications />
+         </ProtectedRoute>
+      }
+/>
 
       {/* Onboarding: authenticated + not onboarded */}
       <Route

@@ -9,10 +9,10 @@ import { toast } from "react-toastify";
 
  
 const inputClass =
-  "w-full rounded-full border border-[#2c2230] bg-[#150f18] px-3.5 py-2 text-xs text-[#f3ecf5] placeholder-[#7d7385] " +
-  "transition focus:border-[#d9b26a] focus:outline-none focus:ring-2 focus:ring-[#d9b26a]/25";
+  "w-full rounded-full border border-base-300 bg-base-100 px-3.5 py-2 text-xs text-base-content placeholder:text-base-content/50 " +
+  "transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25";
 
-const labelClass = "mb-1 block px-1 text-[11px] font-medium text-[#b9aec0]";
+const labelClass = "mb-1 block px-1 text-[11px] font-medium text-base-content/70";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -80,31 +80,31 @@ export default function LoginPage() {
  
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#150f18] p-4">
+    <div className="flex min-h-screen items-center justify-center bg-base-100 text-base-content p-4">
       {/* Single bordered card: form left, illustration right */}
-      <div className="grid w-full max-w-2xl overflow-hidden rounded-xl border border-[#2c2230] bg-[#1b1320] shadow-lg shadow-black/30 lg:grid-cols-2">
+      <div className="grid w-full max-w-2xl overflow-hidden rounded-xl border border-base-300 bg-base-200 shadow-xl lg:grid-cols-2">
         {/* Left: form panel */}
         <div className="flex flex-col justify-center p-5 sm:p-6">
           <div className="mb-4 flex items-center gap-2">
             <img
               src={LOOPTALKLOGO}
               alt="LoopTalk logo"
-              className="h-7 w-7 rounded-full object-cover ring-1 ring-[#d9b26a]/60"
+              className="h-7 w-7 rounded-full object-cover ring-2 ring-primary/60"
             />
-            <span className="text-lg font-bold tracking-tight text-[#d9b26a]">
+            <span className="text-lg font-bold tracking-tight text-primary">
               LoopTalk
             </span>
           </div>
 
-          <h1 className="text-sm font-semibold text-[#f3ecf5]">Welcome back</h1>
-          <p className="mb-4 mt-0.5 text-[11px] leading-relaxed text-[#a0a0a0]">
+          <h1 className="text-sm font-semibold text-base-content">Welcome back</h1>
+          <p className="mb-4 mt-0.5 text-[11px] leading-relaxed text-base-content/70">
             Sign in to your account to continue connecting with language partners worldwide.
           </p>
 
           {error && (
             <div
               role="alert"
-              className="mb-3 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-[11px] text-red-300"
+              className="mb-3 rounded-lg border border-error/30 bg-error/10 px-3 py-1.5 text-[11px] text-error"
             >
               {error}
             </div>
@@ -148,7 +148,7 @@ export default function LoginPage() {
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute inset-y-0 right-0 rounded-r-full px-3.5 text-[11px] font-medium text-[#8f8596] hover:text-[#d9b26a] focus:outline-none focus-visible:text-[#d9b26a]"
+                  className="absolute inset-y-0 right-0 rounded-r-full px-3.5 text-[11px] font-medium text-base-content/60 hover:text-primary focus:outline-none focus-visible:text-primary"
                 >
                   {showPassword ? "Hide" : "Show"}
                 </button>
@@ -158,7 +158,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#d9b26a] py-2 text-xs font-semibold text-[#1b1320] transition hover:bg-[#e6c485] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d9b26a] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1b1320] disabled:cursor-not-allowed disabled:opacity-60"
+              className="btn btn-primary btn-sm w-full rounded-full font-semibold transition"
             >
               {loading && (
                 <svg
@@ -186,12 +186,12 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="mt-4 text-center text-[11px] text-[#a0a0a0]">
+          <p className="mt-4 text-center text-[11px] text-base-content/70">
             Don't have an account?{" "}
             <button
               type="button"
               onClick={() => navigate("/register")}
-              className="font-medium text-[#d9b26a] hover:underline focus:outline-none focus-visible:underline"
+              className="font-medium text-primary hover:underline focus:outline-none focus-visible:underline"
             >
               Sign up
             </button>
@@ -199,17 +199,17 @@ export default function LoginPage() {
         </div>
 
         {/* Right: illustration panel */}
-        <div className="hidden flex-col items-center justify-center gap-4 border-l border-[#2c2230] bg-gradient-to-b from-[#2b1d36] to-[#1b1320] p-6 text-center lg:flex">
+        <div className="hidden flex-col items-center justify-center gap-4 border-l border-base-300 bg-gradient-to-b from-base-200 to-base-300 p-6 text-center lg:flex">
           <img
             src={logoImg}
             alt="Two people on a video call"
             className="w-full max-w-[13rem] object-contain"
           />
           <div className="max-w-[14rem] space-y-1">
-            <h2 className="text-sm font-semibold text-[#f3ecf5]">
+            <h2 className="text-sm font-semibold text-base-content">
               Connect with language partners worldwide
             </h2>
-            <p className="text-[11px] leading-relaxed text-[#a0a0a0]">
+            <p className="text-[11px] leading-relaxed text-base-content/70">
               Practice conversations, make friends, and improve your language
               skills together
             </p>

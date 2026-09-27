@@ -38,32 +38,26 @@ const authHeaders = () => {  // basically a helper fn ...
 // Read-only detail row: icon badge + small label + value (no input-like box)
 function InfoRow({ icon: Icon, label, children }) {
   return (
-   
     <div className="flex items-center gap-4 py-4">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#d9b26a]/10 text-[#d9b26a]">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
         <Icon className="h-5 w-5" aria-hidden="true" />
       </div>
       <div className="min-w-0">
-        <p className="text-xs font-medium text-[#8f8596]">{label}</p>
-        <div className="truncate text-base text-[#f3ecf5]">{children}</div>
+        <p className="text-xs font-medium text-base-content/70">{label}</p>
+        <div className="truncate text-base text-base-content font-medium">{children}</div>
       </div>
     </div>
   );
 }
-   
-
-
-
-
 
 function ProfileSkeleton() {
   return (
     <div className="animate-pulse space-y-6" aria-busy="true">
-      <div className="mx-auto h-36 w-36 rounded-full bg-[#2c2230]" />
-      <div className="mx-auto h-6 w-48 rounded bg-[#2c2230]" />
-      <div className="h-14 rounded-lg bg-[#241a2a]" />
-      <div className="h-14 rounded-lg bg-[#241a2a]" />
-      <div className="h-24 rounded-lg bg-[#241a2a]" />
+      <div className="mx-auto h-36 w-36 rounded-full bg-base-300" />
+      <div className="mx-auto h-6 w-48 rounded bg-base-300" />
+      <div className="h-14 rounded-lg bg-base-300" />
+      <div className="h-14 rounded-lg bg-base-300" />
+      <div className="h-24 rounded-lg bg-base-300" />
     </div>
   );
 }
@@ -160,19 +154,13 @@ export default function Profile() {
 
   const displayName = user?.fullName || user?.username || "";
 
-
-
-
-
-
-
   return (
-    <div className="flex min-h-screen bg-[#150f18] text-[#f3ecf5]">
+    <div className="flex min-h-screen bg-base-100 text-base-content">
       <SideBar />
       <div className="flex-1 px-4 pb-10 pt-20">
-      <div className="mx-auto w-full max-w-2xl overflow-hidden rounded-2xl border border-[#2c2230] bg-[#1b1320] shadow-lg shadow-black/30">
+      <div className="mx-auto w-full max-w-2xl overflow-hidden rounded-2xl border border-base-300 bg-base-200 shadow-xl">
         {/* Cover banner */}
-        <div className="h-28 bg-gradient-to-r from-[#3a2648] via-[#2b1d36] to-[#4a3520] sm:h-32" />
+        <div className="h-28 bg-gradient-to-r from-primary/30 via-base-300 to-secondary/30 sm:h-32" />
 
         {loading && (
           <div className="p-6 sm:p-10">
@@ -184,7 +172,7 @@ export default function Profile() {
           <div className="p-6 sm:p-10">
             <div
               role="alert"
-              className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300"
+              className="rounded-lg border border-error/30 bg-error/10 px-4 py-3 text-sm text-error"
             >
               {error}
             </div>
@@ -202,35 +190,35 @@ export default function Profile() {
                     `https://api.dicebear.com/9.x/avataaars/svg?seed=${user.username || "user"}`
                   }
                   alt={`${displayName || "User"} avatar`}
-                  className="h-32 w-32 rounded-full border-4 border-[#1b1320] bg-[#2c2230] object-cover ring-2 ring-[#d9b26a]/60 sm:h-36 sm:w-36"
+                  className="h-32 w-32 rounded-full border-4 border-base-200 bg-base-300 object-cover ring-2 ring-primary/60 sm:h-36 sm:w-36"
                 />
                 <button
                   type="button"
                   onClick={handleNewAvatar}
                   disabled={updatingAvatar}
                   aria-label="Generate a new profile picture"
-                  className={`absolute bottom-1 right-1 rounded-full bg-[#d9b26a] p-2.5 text-[#1b1320] shadow-md transition hover:bg-[#e6c485] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#d9b26a] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1b1320] disabled:opacity-50 ${
+                  className={`absolute bottom-1 right-1 btn btn-primary btn-circle btn-sm shadow-md transition disabled:opacity-50 ${
                     updatingAvatar ? "animate-pulse" : ""
                   }`}
                 >
-                  <Camera className="h-5 w-5" aria-hidden="true" />
+                  <Camera className="h-4 w-4" aria-hidden="true" />
                 </button>
               </div>
 
               <div>
-                <h1 className="text-2xl font-bold tracking-tight text-[#f3ecf5]">
+                <h1 className="text-2xl font-bold tracking-tight text-base-content">
                   {displayName}
                 </h1>
                 {user.username && user.fullName && (
-                  <p className="text-sm text-[#d9b26a]">@{user.username}</p>
+                  <p className="text-sm font-medium text-primary">@{user.username}</p>
                 )}
               </div>
 
               {user.bio && (
-                <p className="max-w-md text-sm leading-relaxed text-[#b9aec0]">{user.bio}</p>
+                <p className="max-w-md text-sm leading-relaxed text-base-content/70">{user.bio}</p>
               )}
 
-              <p className="text-xs text-[#8f8596]">
+              <p className="text-xs text-base-content/60">
                 {updatingAvatar
                   ? "Updating your picture..."
                   : "Tap the camera to get a new random avatar"}
@@ -239,18 +227,18 @@ export default function Profile() {
 
             {/* Language chips */}
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <span className="inline-flex items-center gap-2 rounded-full border border-[#d9b26a]/30 bg-[#d9b26a]/10 px-4 py-1.5 text-sm text-[#e6c485]">
+              <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
                 <Languages className="h-4 w-4" aria-hidden="true" />
                 Speaks {user.NativeLanguage || "—"}
               </span>
-              <span className="inline-flex items-center gap-2 rounded-full border border-violet-400/30 bg-violet-400/10 px-4 py-1.5 text-sm text-violet-300">
+              <span className="inline-flex items-center gap-2 rounded-full border border-secondary/30 bg-secondary/10 px-4 py-1.5 text-sm font-medium text-secondary">
                 <Languages className="h-4 w-4" aria-hidden="true" />
                 Learning {user.LearningLanguage || "—"}
               </span>
             </div>
 
             {/* Details list */}
-            <div className="mt-8 divide-y divide-[#2c2230] border-y border-[#2c2230]">
+            <div className="mt-8 divide-y divide-base-300 border-y border-base-300">
               <InfoRow icon={User} label="Username">
                 {user.username || "—"}
               </InfoRow>
@@ -266,16 +254,16 @@ export default function Profile() {
             </div>
 
             {/* Account status */}
-            <div className="mt-6 flex items-center justify-between rounded-xl bg-[#241a2a] px-5 py-4">
-              <span className="text-sm text-[#b9aec0]">Account status</span>
-              <span className="inline-flex items-center gap-2 text-sm font-medium text-emerald-300">
-                <span className="h-2 w-2 rounded-full bg-emerald-400" aria-hidden="true" />
+            <div className="mt-6 flex items-center justify-between rounded-xl bg-base-300/60 px-5 py-4">
+              <span className="text-sm text-base-content/70">Account status</span>
+              <span className="inline-flex items-center gap-2 text-sm font-medium text-success">
+                <span className="h-2 w-2 rounded-full bg-success" aria-hidden="true" />
                 Active
               </span>
               <button
                 type="button"
                 onClick={handleEditProfile}
-                className="rounded-lg bg-[#d9b26a] px-4 py-2 text-xs font-semibold text-[#1b1320] transition hover:bg-[#e6c485]"
+                className="btn btn-primary btn-sm rounded-lg text-xs font-semibold transition"
               >
                 Edit Profile
               </button>

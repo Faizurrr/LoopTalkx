@@ -12,7 +12,7 @@ import { isAuthenticated } from "./Helper/Auth.jsx";
 import { isOnboarded } from "./Helper/Onboard.jsx";
 import Notifications from "./Pages/Notifications.jsx";
 import Friends from "./Pages/Friends.jsx" ;
-
+import { useThemeStore } from "./store/useThemeStore.js";
    // logic of conditional routing..
 
 // Route guard for pages requiring login AND completed onboarding (Home, Profile, etc.)
@@ -102,24 +102,23 @@ function AppRoutes() {
 
 
 
-      <Route path="notification" element ={
-         <ProtectedRoute>
-              <Notifications />
-         </ProtectedRoute>
-      }
-/>
-<Route path="notification" element ={
-         <ProtectedRoute>
-              <Notifications />
-         </ProtectedRoute>
-      }
-/>
-   < Route path="friends" element ={
-         <ProtectedRoute>
-              <Friends />
-         </ProtectedRoute>
-      }
-/>
+      <Route
+        path="/notification"
+        element={
+          <ProtectedRoute>
+            <Notifications />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="/notifications" element={<Navigate to="/notification" replace />} />
+      <Route
+        path="/friends"
+        element={
+          <ProtectedRoute>
+            <Friends />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Onboarding: authenticated + not onboarded */}
       <Route
@@ -159,11 +158,19 @@ function AppRoutes() {
 }
 
 function App() {
+  const { theme } = useThemeStore();
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
   return (
-    <BrowserRouter>
-      <AppRoutes />
-      <Footer />
-    </BrowserRouter>
+    <div className="min-h-screen bg-base-100 text-base-content transition-colors duration-200" data-theme={theme}>
+      <BrowserRouter>
+        <AppRoutes />
+        <Footer />
+      </BrowserRouter>
+    </div>
   );
 }
 

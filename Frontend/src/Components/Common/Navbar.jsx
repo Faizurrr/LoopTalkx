@@ -11,6 +11,7 @@ import { ShipWheel } from "lucide-react";
 import { Bell, ChevronDown, LogOut } from "lucide-react";
 import SearchBar from "../Layout/SearchBar";
 import { toast } from "react-toastify";
+import ThemeSelector from "./ThemeSelector";
 
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5003";
@@ -75,17 +76,17 @@ export default function Navbar() {
    
   return (
     <Disclosure
-    as="header"
-      className="sticky top-0 z-30 flex h-16 items-center border-b border-white/10  bg-[#181116] "
+      as="header"
+      className="sticky top-0 z-30 flex h-16 items-center border-b border-base-300 bg-base-200/80 backdrop-blur-md"
     >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">    
         <div className="flex w-full items-center justify-between gap-4">
           {/* Left Side: Logo */}
           <div className="flex items-center gap-2.5">
           
-          <div className="flex items-center gap-2 px-2 text-[#e39a5c]">
+          <div className="flex items-center gap-2 px-2 ">
                   <ShipWheel className="w-6 h-6 stroke-[2.2]" />
-                  <span className="text-xl font-bold tracking-wide text-[#e39a5c]">
+                  <span className="text-xl font-bold tracking-wide ">
                     LoopTalk
                   </span>
                 </div>
@@ -94,7 +95,7 @@ export default function Navbar() {
           {/* Right Side: Search Bar + Actions */}
           <div className="flex flex-1 items-center justify-end gap-2 sm:gap-4">
             <SearchBar />
-
+             <ThemeSelector />
             {/* Notifications Bell */}
             <button type="button" className="btn btn-ghost btn-circle">
               <span className="sr-only">View notifications</span>

@@ -77,72 +77,69 @@ function BodySection() {
 
   if (loading)
     return (
-      <div className="flex flex-1 items-center justify-center p-10 text-[#9e8f98]">
+      <div className="flex flex-1 items-center justify-center p-10 text-base-content/60">
         Loading recommendations of Friends...
       </div>
     );
 
   if (error)
     return (
-      <div className="flex flex-1 items-center justify-center p-10 text-red-400">
+      <div className="flex flex-1 items-center justify-center p-10 text-error">
         Error: {error}
       </div>
     );
 
   if (recommendedFriends.length === 0)
     return (
-      <div className="flex flex-1 items-center justify-center p-10 text-[#9e8f98]">
+      <div className="flex flex-1 items-center justify-center p-10 text-base-content/60">
         No recommendations found yet.
       </div>
     );
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold text-[#e6c485] mb-1">Meet New Learners</h1>
-      <p className="text-[#9e8f98] mb-6">
+      <h1 className="text-2xl font-bold text-base-content mb-1">Meet New Learners</h1>
+      <p className="text-base-content/70 mb-6">
         Discover perfect language exchange partners based on your profile
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {recommendedFriends.map((user) => (
-    
           <div
             key={user._id}
-            className="bg-[#241a2e] rounded-xl p-4 border border-[#2c2230] hover:border-[#e39a5c]/40 transition-colors"
+            className="bg-base-200 rounded-xl p-4 border border-base-300 hover:border-primary/50 transition-colors shadow-sm"
           >
             <div className="flex items-center gap-3 mb-3">
               <img
-  
                 src={user.avatar }
                 alt={ user.username}
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-[#d9b26a]/30"
+                className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/30 bg-base-300"
               />
               <div>
-                <h3 className="text-white font-semibold">
+                <h3 className="text-base-content font-semibold">
                   { user.username}
                 </h3>
-                <p className="text-xs text-[#9e8f98]">{user.city || "—"}</p>
+                <p className="text-xs text-base-content/60">{user.city || "—"}</p>
               </div>
             </div>
 
             <div className="flex gap-2 mb-3 flex-wrap">
-              <span className="text-xs bg-[#d9b26a]/10 text-[#e6c485] border border-[#d9b26a]/20 px-2 py-1 rounded-full">
-            
+              <span className="text-xs bg-primary/10 text-primary border border-primary/20 px-2.5 py-1 rounded-full font-medium">
                 Native: {user.NativeLanguage || "—"}
               </span>
-              <span className="text-xs bg-violet-400/10 text-violet-300 border border-violet-400/20 px-2 py-1 rounded-full">
+              <span className="text-xs bg-secondary/10 text-secondary border border-secondary/20 px-2.5 py-1 rounded-full font-medium">
                 Learning: {user.LearningLanguage || "—"}
               </span>
             </div>
 
             {user.bio && (
-              <p className="text-sm text-[#b9aec0] mb-4 line-clamp-2">{user.bio}</p>
+              <p className="text-sm text-base-content/70 mb-4 line-clamp-2">{user.bio}</p>
             )}
 
             <button
               onClick={() => handleSendRequest(user._id)}
               disabled={requestedIds.has(user._id)}
-              className="w-full bg-[#e39a5c] hover:bg-[#d4895a] disabled:bg-[#362725] disabled:text-[#9e8f98] disabled:cursor-not-allowed text-[#1b1320] font-medium py-2 rounded-lg flex items-center justify-center gap-2 transition-colors"
+              className="w-full btn btn-primary btn-sm rounded-lg flex items-center justify-center gap-2"
             >
               <UserPlus size={16} />
               {requestedIds.has(user._id) ? "Request Sent" : "Send Friend Request"}

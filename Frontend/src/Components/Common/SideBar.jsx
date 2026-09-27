@@ -14,7 +14,7 @@ function SideBar() {
   ];
 
   return (
-    <aside className="w-60 min-h-screen bg-[#181116] border-r border-[#2d222a] p-4 flex flex-col gap-6 select-none">
+    <aside className="w-60 min-h-screen bg-base-200 border-r border-base-300 p-4 flex flex-col gap-6 select-none">
       <nav>
         <ul className="flex flex-col gap-1.5">
           {navItems.map((item) => {
@@ -28,8 +28,8 @@ function SideBar() {
                   onClick={() => setActiveTab(item.name)}
                   className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive
-                      ? 'bg-[#362725] text-[#e39a5c] shadow-inner border border-[#4a3430]'
-                      : 'text-[#9e8f98] hover:text-[#e39a5c] hover:bg-[#251b22]'
+                      ? 'bg-primary/20 text-primary shadow-inner border border-primary/30'
+                      : 'text-base-content/70 hover:text-base-content '
                   }`}
                 >
                   <Icon className="w-5 h-5" />

@@ -33,11 +33,11 @@ const newAvatar = () =>
     .toString(36)
     .slice(2, 10)}`;
 
-const labelClass = "mb-2 block text-sm font-medium text-[#d9b26a]";
+const labelClass = "mb-2 block text-sm font-medium text-primary";
 
 const fieldClass =
-  "w-full rounded-lg border border-[#3a2f3d] bg-[#231a26] px-4 py-3 text-sm text-gray-100 " +
-  "placeholder-gray-500 transition focus:border-[#d9b26a] focus:outline-none focus:ring-2 focus:ring-[#d9b26a]/30";
+  "w-full rounded-lg border border-base-300 bg-base-100 px-4 py-3 text-sm text-base-content " +
+  "placeholder:text-base-content/50 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30";
 
 function ShuffleIcon() {
   return (
@@ -100,7 +100,7 @@ function WheelIcon() {
 function ChevronIcon() {
   return (
     <svg
-      className="pointer-events-none absolute right-4 top-1/2 h-3 w-3 -translate-y-1/2 text-gray-400"
+      className="pointer-events-none absolute right-4 top-1/2 h-3 w-3 -translate-y-1/2 text-base-content/50"
       viewBox="0 0 24 24"
       fill="currentColor"
       aria-hidden="true"
@@ -248,16 +248,16 @@ export default function OnBoardingPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#150f18] px-4 py-10">
-      <div className="w-full max-w-2xl rounded-2xl border border-[#2c2230] bg-[#1b1320] p-6 shadow-xl sm:p-10">
-        <h1 className="text-center text-3xl font-bold tracking-tight text-[#d9b26a]">
+    <div className="flex min-h-screen items-center justify-center bg-base-100 text-base-content px-4 py-10">
+      <div className="w-full max-w-2xl rounded-2xl border border-base-300 bg-base-200 p-6 shadow-xl sm:p-10">
+        <h1 className="text-center text-3xl font-bold tracking-tight text-primary">
           Complete Your Profile
         </h1>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           {/* Avatar */}
           <div className="flex flex-col items-center gap-5">
-            <div className="h-24 w-24 overflow-hidden rounded-full bg-[#e9e2ee] ring-2 ring-[#3a2f3d]">
+            <div className="h-24 w-24 overflow-hidden rounded-full bg-base-300 ring-2 ring-base-300">
               <img
                 src={formData.avatar}
                 alt="Your profile avatar"
@@ -267,7 +267,7 @@ export default function OnBoardingPage() {
             <button
               type="button"
               onClick={handleRandomAvatar}
-              className="flex items-center gap-2 rounded-md bg-[#1f6072] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#25748a] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#3aa0bd]"
+              className="btn btn-secondary btn-sm flex items-center gap-2"
             >
               <ShuffleIcon />
               Generate random avatar
@@ -277,7 +277,7 @@ export default function OnBoardingPage() {
           {error && (
             <div
               role="alert"
-              className="rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300"
+              className="rounded-lg border border-error/40 bg-error/10 px-4 py-3 text-sm text-error"
             >
               {error}
             </div>
@@ -333,14 +333,14 @@ export default function OnBoardingPage() {
                   onChange={handleChange}
                   required
                   className={`${fieldClass} appearance-none pr-10 ${
-                    formData.NativeLanguage ? "" : "text-gray-500"
+                    formData.NativeLanguage ? "" : "text-base-content/50"
                   }`}
                 >
-                  <option value="" disabled>
+                  <option value="" disabled className="bg-base-100 text-base-content">
                     Select your native language
                   </option>
                   {LANGUAGES.map((lang) => (
-                    <option key={lang} value={lang} className="text-gray-900">
+                    <option key={lang} value={lang} className="bg-base-100 text-base-content">
                       {lang}
                     </option>
                   ))}
@@ -361,14 +361,14 @@ export default function OnBoardingPage() {
                   onChange={handleChange}
                   required
                   className={`${fieldClass} appearance-none pr-10 ${
-                    formData.LearningLanguage ? "" : "text-gray-500"
+                    formData.LearningLanguage ? "" : "text-base-content/50"
                   }`}
                 >
-                  <option value="" disabled>
+                  <option value="" disabled className="bg-base-100 text-base-content">
                     Select language you're learning
                   </option>
                   {LANGUAGES.map((lang) => (
-                    <option key={lang} value={lang} className="text-gray-900">
+                    <option key={lang} value={lang} className="bg-base-100 text-base-content">
                       {lang}
                     </option>
                   ))}
@@ -384,7 +384,7 @@ export default function OnBoardingPage() {
               Location
             </label>
             <div className="relative">
-              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-base-content/50">
                 <PinIcon />
               </span>
               <input
@@ -405,7 +405,7 @@ export default function OnBoardingPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#df9548] py-3 text-sm font-semibold text-[#1b1320] transition hover:bg-[#e8a35a] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#e8a35a] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1b1320] disabled:cursor-not-allowed disabled:opacity-60"
+            className="btn btn-primary w-full rounded-lg text-sm font-semibold flex items-center justify-center gap-2"
           >
             {loading ? <Spinner /> : <WheelIcon />}
             {loading ? "Completing onboarding..." : "Complete onboarding"}

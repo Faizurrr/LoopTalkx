@@ -5,7 +5,7 @@ import LOOPTALKLOGO from "../assets/logo.png";
 
 import { toast } from "react-toastify";
 
- const backendUrl = import.meta.env.BACKEND_URL || "http://localhost:5003"; 
+ const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5003"; 
 
  
 const inputClass =

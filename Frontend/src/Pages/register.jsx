@@ -4,7 +4,7 @@ import logoImg from "../assets/LoopTalkLoginpageImage.png";
 import LOOPTALKLOGO from "../assets/logo.png";
 
 import { toast } from "react-toastify";
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5003";
 const inputClass =
   "w-full rounded-full border border-base-300 bg-base-100 px-3.5 py-2 text-xs text-base-content placeholder:text-base-content/50 " +
   "transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25";
@@ -44,7 +44,7 @@ export default function RegisterPage() {
       setLoading(true);
       setError("");
 
-      const response = await fetch("http://localhost:5003/api/auth/register", {
+      const response = await fetch(`${backendUrl}/api/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

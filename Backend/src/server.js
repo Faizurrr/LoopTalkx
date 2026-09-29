@@ -12,7 +12,7 @@ import authRoutes from './routes/auth.routes.js';
 import profileRoutes from './routes/profile.routes.js';
 import Friendrequestrouter from './routes/friendrequst.routes.js';
 import Friendrouter from './routes/friendlist.routes.js';
-
+import Chatrouter from './routes/Chat.route.js';
 
 
 // Resolve __dirname in ES Modules & load .env from the Backend root
@@ -54,7 +54,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/friendrequest', Friendrequestrouter);
 app.use('/api/friendslist', Friendrouter);
-
+app.use('/api/chat', Chatrouter);
+app.use("/api/chat", Chatrouter);
 
 
 

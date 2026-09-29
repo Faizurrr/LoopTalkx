@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { Link } from "react-router-dom";
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5003";
 
 // Small helper to turn a language name into a flag emoji for the pills
@@ -96,10 +96,11 @@ function HeroSection() {
                 {friend.LearningLanguage}
               </span>
             </div>
-
+             <Link to ={`/chat/${friend._id}`}>
             <button className="w-full btn btn-primary btn-sm font-medium rounded-lg transition-colors">
               Message
             </button>
+            </Link>
           </div>
         ))}
       </div>

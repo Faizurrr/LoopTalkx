@@ -6,9 +6,14 @@ import { TbBrandMeta } from "react-icons/tb";
 import { FiPhoneCall } from "react-icons/fi";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa";
 import { ToastContainer } from "react-toastify";
+import { useLocation } from "react-router-dom";
 
 const Footer = () => {
+   const { pathname } = useLocation();
+
+  if (pathname.startsWith("/chat/")) return null;
   return (
+   
     <footer className="border-t border-base-300 bg-base-200 text-base-content/80">
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">

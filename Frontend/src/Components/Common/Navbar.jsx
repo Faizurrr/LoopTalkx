@@ -97,11 +97,12 @@ export default function Navbar() {
             <SearchBar />
              <ThemeSelector />
             {/* Notifications Bell */}
-            <button type="button" className="btn btn-ghost btn-circle">
+            <Link to="/notification">
+            <button type="button" Link to ="/notification" className="btn btn-ghost btn-circle">
               <span className="sr-only">View notifications</span>
               <Bell className="h-6 w-6 text-base-content opacity-70" />
             </button>
-
+                </Link>
             {/* Profile Dropdown */}
             <Menu as="div" className="relative">
               <MenuButton className="flex items-center gap-1 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary">

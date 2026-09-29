@@ -13,10 +13,12 @@ import { isOnboarded } from "./Helper/Onboard.jsx";
 import Notifications from "./Pages/Notifications.jsx";
 import Friends from "./Pages/Friends.jsx" ;
 import { useThemeStore } from "./store/useThemeStore.js";
+import ChatPage from "./Pages/ChatPage.jsx";
+import CallPage from "./Pages/CallPage.jsx";
    // logic of conditional routing..
 
 // Route guard for pages requiring login AND completed onboarding (Home, Profile, etc.)
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children ,  showNavbar = true }) {
   const authenticated = isAuthenticated();
   const onboarded = isOnboarded();
 
@@ -30,7 +32,7 @@ function ProtectedRoute({ children }) {
 
   return (
     <>
-      <Navbar />
+        {showNavbar && <Navbar />}
       {children}
     </>
   );
@@ -119,6 +121,26 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       />
+         // protected Chat page....
+             <Route
+        path="/chat/:id"
+        element={
+          <ProtectedRoute showNavbar={false}>
+            <ChatPage />
+          </ProtectedRoute>
+        }
+      />
+       // protected call page
+       <Route
+        path="/call/:id"
+        element={
+          <ProtectedRoute showNavbar={false}>
+            <CallPage />
+          </ProtectedRoute>
+        }
+      />
+
+
 
       {/* Onboarding: authenticated + not onboarded */}
       <Route

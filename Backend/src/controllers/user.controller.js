@@ -1,5 +1,5 @@
 import User from '../models/user.model.js'
-
+import FriendRequest from '../models/user.model.js'
 
 
   // ─── Get all users ───
@@ -39,34 +39,46 @@ export const getRecommendedFriends = async (req, res) => {
   try {
     const currentUserId = req.user._id || req.user.id;
 
-    // Fetch the current user's details
     const currentUser = await User.findById(currentUserId);
-
     if (!currentUser) {
       return res.status(404).json({ success: false, message: 'Current user not found' });
     }
 
     const { NativeLanguage, LearningLanguage, city } = currentUser;
 
-    
+    // Find accepted requests in either direction (I sent it or I received it)
+    const acceptedRequests = await FriendRequest.find({
+      status: { $in: ['accepted', 'rejected'] } ,
+      $or: [{ sender: currentUserId }, { receiver: currentUserId }],
+    }).select('sender receiver');
+
+    // Collect the other person's id from each accepted request
+    const friendIds = acceptedRequests.map((r) =>
+      r.sender.toString() === currentUserId.toString() ? r.receiver : r.sender
+    );
+
+    // Exclude myself and all accepted friends
+    const excludeIds = [currentUserId, ...friendIds];
+
+    // 1. Best match: language swap
     let recommendedFriends = await User.find({
-      _id: { $ne: currentUserId }, // Exclude current user
-      NativeLanguage: LearningLanguage, 
-      LearningLanguage: NativeLanguage, 
+      _id: { $nin: excludeIds },
+      NativeLanguage: LearningLanguage,
+      LearningLanguage: NativeLanguage,
     }).select('-password');
 
-    // 2. Fallback: If no direct swap matches, find users learning the same language or in the same city
+    // 2. Fallback: same language or same city
     if (recommendedFriends.length === 0) {
       recommendedFriends = await User.find({
-        _id: { $ne: currentUserId },
+        _id: { $nin: excludeIds },
         $or: [
           { NativeLanguage: LearningLanguage },
           { LearningLanguage: NativeLanguage },
-          { city: city }
-        ]
+          { city },
+        ],
       })
-      .limit(10)
-      .select('-password');
+        .limit(10)
+        .select('-password');
     }
 
     return res.status(200).json({

@@ -36,10 +36,16 @@ app.get('/', (_req, res) => {
 
 
 // ─── Middleware...
+const allowedOrigins = [
+  "http://localhost:5173", // request from local...
+  process.env.CLIENT_URL
+];
+
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
-  credentials: true,
+  origin: allowedOrigins,
+  credentials: true
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

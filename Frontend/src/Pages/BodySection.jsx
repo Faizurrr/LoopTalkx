@@ -111,14 +111,17 @@ function BodySection() {
           >
             <div className="flex items-center gap-3 mb-3">
               <img
-                src={user.avatar }
-                alt={ user.username}
+                src={user.avatar}
+                alt={user.fullname || user.fullName || user.username}
                 className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/30 bg-base-300"
               />
               <div>
                 <h3 className="text-base-content font-semibold">
-                  { user.username}
+                  {user.fullname || user.fullName || user.username}
                 </h3>
+                {user.username && (user.fullname || user.fullName) && (
+                  <p className="text-xs text-primary font-medium">@{user.username}</p>
+                )}
                 <p className="text-xs text-base-content/60">{user.city || "—"}</p>
               </div>
             </div>

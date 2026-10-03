@@ -5,8 +5,8 @@ import User from "../models/user.model.js";
 // Works whichever field names your User model uses
 const toStreamUser = (user) => ({
   id: user._id.toString(),
-  name: user.username ,
-  image:  user.avatar || "",
+  name: user.fullname || user.fullName || user.username || "User",
+  image: user.avatar || user.profilePic || "",
 });
 
 // GET /api/chat/token

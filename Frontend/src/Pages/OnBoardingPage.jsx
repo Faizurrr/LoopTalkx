@@ -139,7 +139,7 @@ export default function OnBoardingPage() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    fullName: "",
+    fullname: "",
     bio: "",
     NativeLanguage: "",
     LearningLanguage: "",
@@ -156,7 +156,7 @@ export default function OnBoardingPage() {
       if (rawUser) {
         const user = JSON.parse(rawUser);
         setFormData({
-          fullName: user.fullName || user.username || "",
+          fullname: user.fullname || user.fullName || "",
           bio: user.bio || "",
           NativeLanguage: user.NativeLanguage || "",
           LearningLanguage: user.LearningLanguage || "",
@@ -285,16 +285,16 @@ export default function OnBoardingPage() {
 
           {/* Full name */}
           <div>
-            <label htmlFor="fullName" className={labelClass}>
+            <label htmlFor="fullname" className={labelClass}>
               Full name
             </label>
             <input
-              id="fullName"
+              id="fullname"
               type="text"
-              name="fullName"
+              name="fullname"
               autoComplete="name"
               placeholder="John Doe"
-              value={formData.fullName}
+              value={formData.fullname}
               onChange={handleChange}
               required
               className={fieldClass}

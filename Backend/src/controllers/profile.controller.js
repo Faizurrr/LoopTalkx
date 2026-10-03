@@ -3,8 +3,8 @@ import User from '../models/user.model.js';
  export const createprofile = async (req, res) => {
   try {
  
-    const { username , bio, NativeLanguage, LearningLanguage,  city , avatar } = req.body;
-
+    const { fullname, fullName, username, bio, NativeLanguage, LearningLanguage, city, avatar } = req.body;
+    const nameToUpdate = fullname || fullName;
 
     // 2. Get authenticated user ID (from your auth middleware, e.g., JWT verify)
     const userId = req.user?._id || req.user?.id;
@@ -20,6 +20,7 @@ import User from '../models/user.model.js';
     const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
+        ...(nameToUpdate && { fullname: nameToUpdate }),
         ...(username && { username }),
         ...(bio && { bio }),
         ...(NativeLanguage && { NativeLanguage }),

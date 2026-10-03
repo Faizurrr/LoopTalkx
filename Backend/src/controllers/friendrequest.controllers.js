@@ -193,7 +193,7 @@ export const getFriendRequests = async (req, res) => {
       status: 'pending',
     }).populate(
       'sender',
-      'username email avatar bio NativeLanguage LearningLanguage city isOnline'
+      'fullname username email avatar bio NativeLanguage LearningLanguage city isOnline'
     );
 
     // Step 2: Return response

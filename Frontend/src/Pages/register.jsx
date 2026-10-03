@@ -15,6 +15,7 @@ export default function RegisterPage() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+    fullname: "",
     username: "",
     email: "",
     password: "",
@@ -50,6 +51,7 @@ export default function RegisterPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
+           fullname: formData.fullname,
           username: formData.username,
           email: formData.email,
           password: formData.password,
@@ -108,7 +110,25 @@ export default function RegisterPage() {
             </div>
           )}
 
+
           <form onSubmit={handleSubmit} className="space-y-3">
+
+             <div>
+              <label htmlFor="fullname" className={labelClass}>
+                Full Name
+              </label>
+              <input
+                id="fullname"
+                type="text"
+                name="fullname"
+                autoComplete="fullname"
+                placeholder="Enter your full name"
+                value={formData.fullname}
+                onChange={handleChange}
+                required
+                className={inputClass}
+              />
+            </div>
             <div>
               <label htmlFor="username" className={labelClass}>
                 Username
@@ -118,14 +138,13 @@ export default function RegisterPage() {
                 type="text"
                 name="username"
                 autoComplete="username"
-                placeholder="Choose a username"
+                placeholder="Choose a unique username"
                 value={formData.username}
                 onChange={handleChange}
                 required
                 className={inputClass}
               />
             </div>
-
             <div>
               <label htmlFor="email" className={labelClass}>
                 Email address
@@ -142,7 +161,6 @@ export default function RegisterPage() {
                 className={inputClass}
               />
             </div>
-
             <div>
               <label htmlFor="password" className={labelClass}>
                 Password

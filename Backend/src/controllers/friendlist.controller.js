@@ -12,11 +12,11 @@ export const allfriends = async (req, res) => {
     })
       .populate(
         "sender",
-        "username email avatar bio NativeLanguage LearningLanguage city isOnline"
+        "fullname username email avatar bio NativeLanguage LearningLanguage city isOnline"
       )
       .populate(
         "receiver",
-        "username email avatar bio NativeLanguage LearningLanguage city isOnline"
+        "fullname username email avatar bio NativeLanguage LearningLanguage city isOnline"
       );
 
     // The "friend" is whichever side of the request isn't the current user

@@ -87,7 +87,12 @@ function Friends() {
                   alt={friend.username}
                   className="w-11 h-11 rounded-full object-cover bg-base-300 ring-2 ring-primary/30"
                 />
-                <p className="font-semibold text-base-content">{friend.username}</p>
+              <div>
+                <p className="font-semibold text-base-content">{friend.fullname || friend.username}</p>
+                {friend.fullname && friend.username && (
+                  <p className="text-xs text-primary font-medium">@{friend.username}</p>
+                )}
+              </div>
               </div>
 
               <div className="flex gap-2 mb-4 flex-wrap">

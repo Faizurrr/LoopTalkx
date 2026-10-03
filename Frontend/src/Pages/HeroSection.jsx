@@ -84,7 +84,8 @@ function HeroSection() {
                 alt={friend.username}
                 className="w-11 h-11 rounded-full object-cover bg-base-300 ring-2 ring-primary/30"
               />
-              <p className="font-semibold text-base-content">{friend.username}</p>
+              <p className="font-semibold text-base-content">{friend.fullName}</p>
+              <p className="text-xs text-base-content/60">@{friend.username}</p>
             </div>
 
             <div className="flex gap-2 mb-4 flex-wrap">

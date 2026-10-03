@@ -55,8 +55,8 @@ function CustomChatHeader({ handleVideoCall }) {
   );
 
   const user = otherMember?.user || {};
-  const displayName = user.name ;
-  const avatarUrl = user.image ;
+  const displayName = user.fullname || user.fullName || user.name || user.username || user.id || "Chat";
+  const avatarUrl = user.image || user.profilePic || user.avatar;
   const isOnline = Boolean(user.online);
 
   return (

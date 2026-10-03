@@ -11,9 +11,9 @@ const generateToken = (id) =>
    // register...
 export const register = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { fullname, username, email, password } = req.body;
 
-    if (!username || !email || !password) {
+    if (!fullname||!username || !email || !password) {
       return res.status(400).json({ success: false, message: 'All fields are required' });
     }
 
@@ -22,7 +22,7 @@ export const register = async (req, res) => {
       return res.status(409).json({ success: false, message: 'User already exists' });
     }
 
-    const user = await User.create({ username, email, password });
+    const user = await User.create({ fullname, username, email, password });
     const token = generateToken(user._id);
 
     const isOnboarded = Boolean(user.NativeLanguage && user.LearningLanguage);
@@ -33,6 +33,7 @@ export const register = async (req, res) => {
       user: {
         id: user._id,
         _id: user._id,
+        fullname: user.fullname,
         username: user.username,
         email: user.email,
         avatar: user.avatar || '',
@@ -72,6 +73,7 @@ export const login = async (req, res) => {
       user: {
         id: user._id,
         _id: user._id,
+        fullname: user.fullname,
         username: user.username,
         email: user.email,
         avatar: user.avatar || '',

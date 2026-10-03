@@ -164,8 +164,11 @@ function Notifications() {
                   />
                   <div>
                     <p className="font-medium text-sm text-base-content">
-                      {req.sender?.username}
+                      {req.sender?.fullname || req.sender?.username}
                     </p>
+                    {req.sender?.fullname && req.sender?.username && (
+                      <p className="text-xs text-primary font-medium">@{req.sender.username}</p>
+                    )}
                     <div className="flex gap-2 mt-1.5">
                       <span className="text-xs bg-primary/10 text-primary border border-primary/20 px-2.5 py-0.5 rounded-full font-medium">
                         Native: {req.sender?.NativeLanguage}

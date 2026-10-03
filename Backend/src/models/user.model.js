@@ -2,12 +2,23 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema(
-  {
+  { 
+    fullname: {
+       type: String,
+        required: [true, 'Full name is required'],
+        trim: true,
+        minlength: 3,
+        maxlength: 50,
+    },
     username: {
       type: String,
       required: [true, 'Username is required'],
+      unique: true,        // creates a unique index
+      lowercase: true,     // "FaizKhan" and "faizkhan" become the same handle
       trim: true,
-      minlength: [3, 'Username must be at least 3 characters'],
+      minlength: 3,
+      maxlength: 30,
+      match: /^[a-z0-9._]+$/, // letters, numbers, dot, underscore only
     },
     email: {
       type: String,

@@ -152,7 +152,7 @@ export default function Profile() {
       })
     : "—";
 
-  const displayName = user?.fullName || user?.username || "";
+  const displayName = user?.fullname ||  user?.username || "";
 
   return (
     <div className="flex min-h-screen bg-base-100 text-base-content">
@@ -209,7 +209,7 @@ export default function Profile() {
                 <h1 className="text-2xl font-bold tracking-tight text-base-content">
                   {displayName}
                 </h1>
-                {user.username && user.fullName && (
+                {user.username && (user.fullname || user.fullName) && (
                   <p className="text-sm font-medium text-primary">@{user.username}</p>
                 )}
               </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { UserPlus } from 'lucide-react';
 import { toast } from 'react-toastify';
-
+import { MapPin } from "lucide-react";
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5003";
 const RECOMMENDED_URL = `${backendUrl}/api/users/Recommendedfriends`;
 
@@ -115,15 +115,22 @@ function BodySection() {
                 alt={user.fullname || user.fullName || user.username}
                 className="w-10 h-10 rounded-full object-cover ring-2 ring-primary/30 bg-base-300"
               />
-              <div>
-                <h3 className="text-base-content font-semibold">
-                  {user.fullname || user.fullName || user.username}
-                </h3>
-                {user.username && (user.fullname || user.fullName) && (
-                  <p className="text-xs text-primary font-medium">@{user.username}</p>
-                )}
-                <p className="text-xs text-base-content/60">{user.city || "—"}</p>
-              </div>
+             <div className="flex min-w-0 flex-col gap-0.5">
+  <h3 className="truncate text-base font-semibold leading-tight text-base-content">
+    {user.fullname || user.username || "Unknown user"}
+  </h3>
+
+  {user.username && user.fullname && (
+    <p className="truncate text-xs font-medium text-primary">
+      @{user.username}
+    </p>
+  )}
+
+  <p className="flex items-center gap-1 text-xs text-base-content/60">
+    <MapPin className="h-3 w-3 shrink-0" />
+    <span className="truncate">{user.city || "Location not set"}</span>
+  </p>
+</div>
             </div>
 
             <div className="flex gap-2 mb-3 flex-wrap">

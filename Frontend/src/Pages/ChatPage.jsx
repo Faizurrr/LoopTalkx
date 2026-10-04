@@ -55,7 +55,7 @@ function CustomChatHeader({ handleVideoCall }) {
   );
 
   const user = otherMember?.user || {};
-  const displayName = user.fullname || user.fullName || user.name || user.username || user.id || "Chat";
+  const displayName = user.fullname ||  user.username || user.id || "Chat";
   const avatarUrl = user.image || user.profilePic || user.avatar;
   const isOnline = Boolean(user.online);
 
@@ -139,16 +139,35 @@ function CustomMessageInput() {
       setUploading(true);
       let attachments = [];
 
+       
+ // this will handle both image and file attachments...
       if (file) {
-        const response = await channel.sendFile(file);
-        attachments.push({
-          type: file.type.startsWith("image/") ? "image" : "file",
+  const isImage = file.type.startsWith("image/");
+
+  const response = isImage
+    ? await channel.sendImage(file)
+    : await channel.sendFile(file);
+
+  attachments.push(
+    isImage
+      ? {
+          type: "image",
+          image_url: response.file,   // not asset_url
+          fallback: file.name,
+          original_file_size: file.size,
+          mime_type: file.type,
+        }
+      : {
+          type: "file",
           asset_url: response.file,
           title: file.name,
           file_size: file.size,
           mime_type: file.type,
-        });
-      }
+        }
+  );
+}
+
+
 
       const messageText = text.trim();
       setText("");
@@ -204,7 +223,7 @@ function CustomMessageInput() {
           }}
         />
 
-        {/* Left: Standalone (+) Attachment Button */}
+     
         <button
           type="button"
           onClick={triggerFileSelect}

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import SideBar from "../Components/Common/SideBar";
+
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5003";
 
-// Small helper to turn a language name into a flag emoji for the pills
 const LANGUAGE_FLAGS = {
   english: "🇬🇧",
   spanish: "🇪🇸",
@@ -25,11 +26,39 @@ const getFlag = (language) => {
   return LANGUAGE_FLAGS[language.toLowerCase()] || "🌐";
 };
 
+const Avatar = ({ friend }) => {
+  const name = friend.fullname || friend.username || "?";
+  if (friend.avatar) {
+    return (
+      <img
+        src={friend.avatar}
+        alt={name}
+        className="w-14 h-14 rounded-full object-cover bg-base-300 shrink-0"
+      />
+    );
+  }
+  return (
+    <div className="w-14 h-14 rounded-full bg-primary/15 text-primary flex items-center justify-center text-xl font-semibold shrink-0">
+      {name.charAt(0).toUpperCase()}
+    </div>
+  );
+};
+
+const SkeletonRow = () => (
+  <div className="flex items-center gap-4 px-4 py-3 animate-pulse">
+    <div className="w-14 h-14 rounded-full bg-base-300 shrink-0" />
+    <div className="flex-1 space-y-2">
+      <div className="h-3.5 w-1/3 rounded bg-base-300" />
+      <div className="h-3 w-2/3 rounded bg-base-300" />
+    </div>
+  </div>
+);
+
 function Friends() {
-    
   const [friends, setFriends] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -61,55 +90,87 @@ function Friends() {
     fetchFriends();
   }, []);
 
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return friends;
+    return friends.filter(
+      (f) =>
+        f.fullname?.toLowerCase().includes(q) ||
+        f.username?.toLowerCase().includes(q)
+    );
+  }, [friends, query]);
+
   return (
     <div className="flex min-h-screen bg-base-100 text-base-content">
       <SideBar />
-      <div className="px-10 py-8 flex-1">
-        <h1 className="text-2xl font-bold text-base-content mb-6">Your Friends</h1>
 
-        {loading && <p className="text-base-content/70 text-sm">Loading friends…</p>}
-        {!loading && error && <p className="text-error text-sm">{error}</p>}
-        {!loading && !error && friends.length === 0 && (
-          <p className="text-base-content/70 text-sm">
-            You haven't added any friends yet.
-          </p>
-        )}
+      <div className="flex-1 flex justify-center">
+        <div className="w-full max-w-xl border-x border-base-300 min-h-screen flex flex-col">
+          {/* Header */}
+          <div className="px-4 pt-6 pb-3 sticky top-0 bg-base-100 z-10">
+            <h1 className="text-2xl font-bold mb-4">Friends</h1>
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search friends"
+              className="input input-sm w-full bg-base-200 rounded-full px-4 h-10 focus:outline-none"
+            />
+          </div>
 
-        <div className="flex flex-wrap gap-5">
-          {friends.map((friend) => (
-            <div
-              key={friend._id}
-              className="w-72 bg-base-200 border border-base-300 rounded-xl px-5 py-4 shadow-sm"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <img
-                  src={friend.avatar}
-                  alt={friend.username}
-                  className="w-11 h-11 rounded-full object-cover bg-base-300 ring-2 ring-primary/30"
-                />
-              <div>
-                <p className="font-semibold text-base-content">{friend.fullname || friend.username}</p>
-                {friend.fullname && friend.username && (
-                  <p className="text-xs text-primary font-medium">@{friend.username}</p>
-                )}
-              </div>
-              </div>
-
-              <div className="flex gap-2 mb-4 flex-wrap">
-                <span className="text-xs bg-primary/10 text-primary border border-primary/20 px-2.5 py-1 rounded-full font-medium">
-                  {getFlag(friend.NativeLanguage)} Native: {friend.NativeLanguage}
-                </span>
-                <span className="text-xs bg-secondary/10 text-secondary border border-secondary/20 px-2.5 py-1 rounded-full font-medium">
-                  {getFlag(friend.LearningLanguage)} Learning:{" "}
-                  {friend.LearningLanguage}
-                </span>
-              </div>
-
-              <button className="w-full btn btn-primary btn-sm font-medium rounded-lg transition-colors">
-                Message
-              </button>
+          {/* States */}
+          {loading && (
+            <div>
+              {[...Array(6)].map((_, i) => (
+                <SkeletonRow key={i} />
+              ))}
             </div>
-          ))}
+          )}
+
+          {!loading && error && (
+            <p className="text-error text-sm px-4 py-6">{error}</p>
+          )}
+
+          {!loading && !error && friends.length === 0 && (
+            <p className="text-base-content/60 text-sm px-4 py-6">
+              You haven't added any friends yet.
+            </p>
+          )}
+
+          {!loading && !error && friends.length > 0 && filtered.length === 0 && (
+            <p className="text-base-content/60 text-sm px-4 py-6">
+              No friends match "{query}".
+            </p>
+          )}
+
+          {/* Chat-style list */}
+          <ul>
+            {filtered.map((friend) => (
+              <li key={friend._id}>
+                <Link
+                  to={`/chat/${friend._id}`}
+                  className="w-full flex items-center gap-4 px-4 py-3 hover:bg-base-200 focus-visible:bg-base-200 focus-visible:outline-none transition-colors"
+                >
+                  <Avatar friend={friend} />
+
+                  <div className="flex-1 min-w-0 border-b border-base-300/70 pb-3 -mb-3">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <p className="font-semibold truncate">
+                        {friend.fullname || friend.username}
+                      </p>
+                      {friend.fullname && friend.username && (
+                        <span className="text-xs text-base-content/50 shrink-0">
+                          @{friend.username}
+                        </span>
+                      )}
+                    </div>
+
+                  
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>

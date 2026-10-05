@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Search, X, UserPlus, Check, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
 
-const backendUrl = "http://localhost:5003";
+const backendUrl = process.env.VITE_BACKEND_URL || "http://localhost:5003";
 const SEARCH_URL = `${backendUrl}/api/user/search`; // must match how your router is mounted
 
 

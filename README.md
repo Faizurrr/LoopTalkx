@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🌐 LoopTalkx
+# 🌐 LoopTalk
 
 **A language exchange platform. Find native speakers, make friends, and practice through real-time chat and video calls.**
 

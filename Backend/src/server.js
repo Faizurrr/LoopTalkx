@@ -14,6 +14,9 @@ import Friendrequestrouter from './routes/friendrequst.routes.js';
 import Friendrouter from './routes/friendlist.routes.js';
 import Chatrouter from './routes/Chat.route.js';
 import searchrouter from './routes/search.route.js';
+import airouter from './routes/ai.routes.js';
+
+
 
 // Resolve __dirname in ES Modules & load .env from the Backend root
 const __filename = fileURLToPath(import.meta.url);
@@ -62,7 +65,7 @@ app.use('/api/friendrequest', Friendrequestrouter);
 app.use('/api/friendslist', Friendrouter);
 app.use('/api/chat', Chatrouter);
 app.use("/api/user", searchrouter);
-
+app.use("/api/ai", airouter);
 
 
 

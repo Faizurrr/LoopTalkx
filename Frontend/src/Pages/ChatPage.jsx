@@ -2,7 +2,15 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import { StreamChat } from "stream-chat";
-import { ArrowLeft, Plus, Send, Paperclip, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Plus,
+  Send,
+  Paperclip,
+  X,
+  Sparkles,
+  Loader2,
+} from "lucide-react";
 import {
   Channel,
   Chat,
@@ -15,6 +23,9 @@ import {
 
 import ChatLoader from "../Components/Common/ChatLoader";
 import CallButton from "../Components/Common/CallButton";
+import AICoachCard from "../Components/Common/AICoachCard";
+
+import useAiCoach from "../Helper/useAiCoach";
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5003";
@@ -55,7 +66,7 @@ function CustomChatHeader({ handleVideoCall }) {
   );
 
   const user = otherMember?.user || {};
-  const displayName = user.fullname ||  user.username || user.id || "Chat";
+  const displayName = user.fullname || user.username || user.id || "Chat";
   const avatarUrl = user.image || user.profilePic || user.avatar;
   const isOnline = Boolean(user.online);
 
@@ -124,12 +135,23 @@ function CustomChatHeader({ handleVideoCall }) {
   );
 }
 
-/* Custom Input Component: Plus Button on Left, Rounded Pill Input in Middle, Paper Plane Send on Right */
+/* Custom Input Component: Plus on Left, Pill Input in Middle, AI Coach + Send on Right */
 function CustomMessageInput() {
   const { channel } = useChannelStateContext();
   const [text, setText] = useState("");
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+
+  // AI coach state lives here because it needs the typed text
+  const {
+    checking,
+    suggestion,
+    error: aiError,
+    checkWithAI,
+    clearSuggestion,
+  } = useAiCoach();
+
+  const handleCheckWithAI = () => checkWithAI(text);
 
   const handleSend = async (e) => {
     e?.preventDefault();
@@ -137,37 +159,35 @@ function CustomMessageInput() {
 
     try {
       setUploading(true);
+      clearSuggestion();
       let attachments = [];
 
-       
- // this will handle both image and file attachments...
+      // this will handle both image and file attachments...
       if (file) {
-  const isImage = file.type.startsWith("image/");
+        const isImage = file.type.startsWith("image/");
 
-  const response = isImage
-    ? await channel.sendImage(file)
-    : await channel.sendFile(file);
+        const response = isImage
+          ? await channel.sendImage(file)
+          : await channel.sendFile(file);
 
-  attachments.push(
-    isImage
-      ? {
-          type: "image",
-          image_url: response.file,   // not asset_url
-          fallback: file.name,
-          original_file_size: file.size,
-          mime_type: file.type,
-        }
-      : {
-          type: "file",
-          asset_url: response.file,
-          title: file.name,
-          file_size: file.size,
-          mime_type: file.type,
-        }
-  );
-}
-
-
+        attachments.push(
+          isImage
+            ? {
+                type: "image",
+                image_url: response.file, // not asset_url
+                fallback: file.name,
+                original_file_size: file.size,
+                mime_type: file.type,
+              }
+            : {
+                type: "file",
+                asset_url: response.file,
+                title: file.name,
+                file_size: file.size,
+                mime_type: file.type,
+              }
+        );
+      }
 
       const messageText = text.trim();
       setText("");
@@ -198,6 +218,21 @@ function CustomMessageInput() {
 
   return (
     <div className="chat-custom-input-bar w-full px-3 py-3 sm:px-4 bg-base-100 border-t border-base-content/20 flex flex-col gap-2 shrink-0 z-10">
+      {/* AI coach suggestion / error card */}
+      <AICoachCard
+        suggestion={suggestion}
+        error={aiError}
+        onClose={clearSuggestion}
+        onUse={() => {
+          setText(suggestion.corrected);
+          clearSuggestion();
+        }}
+        onSendAsIs={() => {
+          clearSuggestion();
+          handleSend();
+        }}
+      />
+
       {/* Attachment Preview if selected */}
       {file && (
         <div className="flex items-center gap-2 px-3 py-1.5 bg-base-200 border border-base-300 rounded-lg text-xs w-fit max-w-full">
@@ -213,7 +248,10 @@ function CustomMessageInput() {
         </div>
       )}
 
-      <form onSubmit={handleSend} className="flex items-center gap-2.5 sm:gap-3 w-full">
+      <form
+        onSubmit={handleSend}
+        className="flex items-center gap-2.5 sm:gap-3 w-full"
+      >
         <input
           id="chat-file-input"
           type="file"
@@ -223,7 +261,6 @@ function CustomMessageInput() {
           }}
         />
 
-     
         <button
           type="button"
           onClick={triggerFileSelect}
@@ -239,12 +276,36 @@ function CustomMessageInput() {
           <input
             type="text"
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={(e) => {
+              setText(e.target.value);
+              // an old suggestion no longer matches the edited message
+              if (suggestion || aiError) clearSuggestion();
+            }}
             onKeyDown={handleKeyDown}
             placeholder="Send a message"
             className="w-full h-11 px-5 py-2 rounded-full border border-base-content/25 bg-base-100 text-base-content placeholder:text-base-content/50 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-sm sm:text-base shadow-xs"
           />
         </div>
+
+        {/* AI coach button (type="button" so it never submits the form) */}
+        <button
+          type="button"
+          onClick={handleCheckWithAI}
+          disabled={!text.trim() || checking || uploading}
+          className={`w-10 h-10 rounded-full flex items-center justify-center transition-all shrink-0 active:scale-95 ${
+            text.trim() && !checking
+              ? "bg-sky-100 text-sky-600 hover:bg-sky-200 cursor-pointer"
+              : "bg-sky-50 text-sky-300 cursor-not-allowed"
+          }`}
+          title="Check with AI coach"
+          aria-label="Check with AI coach"
+        >
+          {checking ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Sparkles className="w-5 h-5" />
+          )}
+        </button>
 
         {/* Right: Standalone Paper Plane Send Button */}
         <button
@@ -382,7 +443,7 @@ export default function ChatPage() {
             {/* Custom Centered Top Navigation Bar */}
             <CustomChatHeader handleVideoCall={handleVideoCall} />
 
-            {/* Main Window with Message List & Custom Input Bar matching user screenshot */}
+            {/* Main Window with Message List & Custom Input Bar */}
             <div className="chat-window-container flex flex-1 h-full overflow-hidden relative">
               <Window>
                 <MessageList />

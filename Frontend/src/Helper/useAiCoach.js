@@ -34,23 +34,25 @@ export default function useAiCoach() {
     setSuggestion(null);
     setError("");
 
+    const backendUrl =
+      import.meta.env.VITE_BACKEND_URL || "http://localhost:5003";
+
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_BACKEND_URL}/api/ai/correct`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ text: message, language }),
-        }
-      );
+      const res = await fetch(`${backendUrl}/api/ai/correct`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ text: message, language }),
+      });
 
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        setError(data.message || "The AI coach isn't available right now.");
+        setError(
+          data.message || "AI coach isn't available right now. Try again."
+        );
         return;
       }
 

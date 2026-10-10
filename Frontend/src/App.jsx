@@ -62,7 +62,12 @@ function PublicOnlyRoute({ children }) {
     return onboarded ? <Navigate to="/" replace /> : <Navigate to="/onBoarding" replace />;
   }
 
-  return children;
+  return (
+    <>
+      <Navbar />
+      {children}
+    </>
+  );
 }
 
 function AppRoutes() {

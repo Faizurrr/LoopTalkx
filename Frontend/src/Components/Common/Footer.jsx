@@ -30,6 +30,7 @@ const Footer = () => {
           <div>
             <h3 className="mb-4 text-lg font-semibold text-primary">Resources</h3>
             <ul className="space-y-2 text-sm text-base-content/70">
+                  <li><Link to="/" className="transition hover:text-primary">Home</Link></li>
               <li><Link to="/about" className="transition hover:text-primary">About</Link></li>
               <li><Link to="/docs" className="transition hover:text-primary">Docs</Link></li>
               <li><Link to="/privacy" className="transition hover:text-primary">Privacy</Link></li>

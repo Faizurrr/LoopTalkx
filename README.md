@@ -2,9 +2,9 @@
 
 # 🌐 LoopTalk
 
-**A language exchange platform. Find native speakers, make friends, and practice through real-time chat and video calls.**
+**A language exchange platform. Find native speakers, make friends, and practice through real-time chat and video calls, with an AI coach that corrects your messages as you learn.**
 
-[Live Demo](https://looptalk-sand.vercel.app) · [Report a Bug](https://github.com/Faizurrr/LoopTalk/issues) · [Request a Feature](https://github.com/Faizurrr/LoopTalkx/issues)
+[Live Demo](https://looptalk-sand.vercel.app) · [Report a Bug](https://github.com/Faizurrr/LoopTalkx/issues) · [Request a Feature](https://github.com/Faizurrr/LoopTalkx/issues)
 
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)
 ![Node.js](https://img.shields.io/badge/Node.js-Express-339933?style=flat-square&logo=node.js&logoColor=white)
@@ -40,7 +40,7 @@
 
 Learning a language is easier with a real conversation partner. **LoopTalk** connects learners around the world through a *language swap*: you tell the app which language you speak natively and which one you want to learn, and it recommends people who speak your target language and want to learn yours.
 
-Once you connect, you can chat in real time, share files and images, and jump into a video call, all from one interface.
+Once you connect, you can chat in real time, share files and images, and jump into a video call, all from one interface. While you chat, the built-in **AI Coach** can check your message and correct it in the language you are learning, so you learn from every conversation.
 
 ---
 
@@ -69,6 +69,12 @@ Once you connect, you can chat in real time, share files and images, and jump in
 - Image and file attachments, previewed before sending.
 - Deterministic channel IDs so each pair of users always shares one conversation.
 
+### AI Coach
+- A sparkle button in the chat input sends your draft message to the AI Coach.
+- The coach corrects the message in **your learning language**, as set during onboarding, so the feedback matches what you are studying.
+- Works directly inside the conversation: no copying text into a separate tool.
+- Handled by a protected backend endpoint (`POST /api/ai/correct`), so the AI provider key never reaches the browser.
+
 ### Video calling (Stream Video)
 - Start a call from any chat; a shareable call link is posted into the conversation.
 - Call page built with Stream's `SpeakerLayout` and `CallControls`.
@@ -89,6 +95,7 @@ Once you connect, you can chat in real time, share files and images, and jump in
 | **Frontend** | React 19, Vite, React Router v7, Tailwind CSS + DaisyUI, Zustand, Headless UI, Lucide React, react-hot-toast |
 | **Realtime** | Stream Chat React, `stream-chat`, `@stream-io/video-react-sdk` |
 | **Backend** | Node.js, Express, MongoDB, Mongoose |
+| **AI** | LLM API for message correction (AI Coach), called from the backend |
 | **Security** | JWT (`jsonwebtoken`), `bcryptjs` (12 salt rounds), CORS |
 | **Tooling** | nodemon, oxlint, dotenv |
 
@@ -108,6 +115,14 @@ Existing friends and users with accepted or rejected requests are excluded.
 **Stream integration.**
 - *Chat:* the `StreamChat` client is created when `ChatPage` mounts. The backend upserts both users into Stream (`/api/chat/token`, `/api/chat/sync-user/:id`) before the channel is created. Channel ID: `[myId, targetId].sort().join("-")`.
 - *Video:* the `StreamVideoClient` is created when `CallPage` mounts. The call ID reuses the chat channel ID, and the call link is sent as a chat message.
+
+**AI Coach flow.**
+1. The user types a message in the chat input and clicks the sparkle button.
+2. The frontend sends the message to `POST /api/ai/correct` with the user's JWT.
+3. The backend reads the user's learning language from their profile and asks the AI model to correct the message in that language.
+4. The corrected version is returned to the client.
+
+The AI provider key stays on the server in `Backend/.env`, and the endpoint is behind the same JWT middleware as the rest of the API.
 
 ---
 
@@ -135,7 +150,7 @@ LoopTalkx/
         ├── server.js
         ├── config/           # db.js (MongoDB connection)
         ├── models/           # user.model.js, friendrequest.model.js
-        ├── controllers/      # auth, user, profile, friendrequest, friendlist, chat, search
+        ├── controllers/      # auth, user, profile, friendrequest, friendlist, chat, search, ai
         ├── routes/
         ├── middlewares/      # auth.middleware.js (JWT protect)
         └── lib/              # stream.js (Stream server client)
@@ -150,6 +165,7 @@ LoopTalkx/
 - npm v9 or later
 - A MongoDB connection string (local or [MongoDB Atlas](https://www.mongodb.com/atlas))
 - A [Stream](https://getstream.io) account with Chat and Video enabled (API key and secret)
+- An API key for the AI provider used by the AI Coach
 
 ### 1. Clone the repository
 ```bash
@@ -202,6 +218,7 @@ MONGO_URI=mongodb+srv://<user>:<password>@cluster.mongodb.net/looptalkx
 JWT_SECRET=your_jwt_secret
 STREAM_API_KEY=your_stream_api_key
 STREAM_API_SECRET=your_stream_api_secret
+AI_API_KEY=your_ai_provider_api_key
 CLIENT_URL=http://localhost:5173
 ```
 
@@ -219,11 +236,12 @@ VITE_STREAM_API_KEY=your_stream_api_key
 | `JWT_SECRET` | Yes | Secret used to sign JWTs |
 | `STREAM_API_KEY` | Yes | Stream API key (backend and frontend) |
 | `STREAM_API_SECRET` | Yes | Stream API secret (backend only) |
+| `AI_API_KEY` | Yes (for AI Coach) | API key for the AI provider used to correct messages (backend only) |
 | `CLIENT_URL` | No | Frontend origin for CORS (default `http://localhost:5173`) |
 | `VITE_BACKEND_URL` | Yes | Backend base URL used by the frontend |
 | `VITE_STREAM_API_KEY` | Yes | Stream API key used by the frontend |
 
-> Never commit `.env` files or your Stream secret.
+> Never commit `.env` files, your Stream secret, or your AI provider key.
 
 ---
 
@@ -247,6 +265,7 @@ Protected endpoints require the header `Authorization: Bearer <token>`.
 | `GET` | `/api/chat/token` | Yes | Get a Stream token and upsert the user |
 | `GET` | `/api/chat/sync-user/:id` | Yes | Upsert a target user into Stream |
 | `GET` | `/api/user/search?query=` | Yes | Search users by name or username |
+| `POST` | `/api/ai/correct` | Yes | AI Coach: correct a message in the user's learning language |
 
 ---
 
@@ -263,7 +282,7 @@ Protected endpoints require the header `Authorization: Bearer <token>`.
 | `avatar` | String | DiceBear URL |
 | `bio` | String | Max 200 chars |
 | `NativeLanguage` | String | Language the user speaks natively |
-| `LearningLanguage` | String | Language the user is learning |
+| `LearningLanguage` | String | Language the user is learning (also used by the AI Coach) |
 | `city` | String | Location |
 | `isOnline` | Boolean | Default `false` |
 | `lastSeen` | Date | Default `Date.now` |
@@ -290,7 +309,7 @@ A compound unique index on `{ sender, receiver }` prevents duplicate requests.
 | `/profile` | Profile | Authenticated and onboarded |
 | `/notification` | Friend request notifications | Authenticated and onboarded |
 | `/friends` | Friends list | Authenticated and onboarded |
-| `/chat/:id` | Direct message chat | Authenticated and onboarded |
+| `/chat/:id` | Direct message chat (with AI Coach) | Authenticated and onboarded |
 | `/call/:id` | Video call | Authenticated and onboarded |
 | `/onBoarding` | Profile setup and edit | Authenticated |
 | `/login` | Login | Unauthenticated only |

@@ -2,16 +2,14 @@ import { GoogleGenAI } from "@google/genai";
 
 const MAX_LENGTH = 500;
 
-// Same list as your onboarding page. Keeping it as an allowlist also stops
-// anyone from injecting instructions through the "language" field.
+
 const SUPPORTED_LANGUAGES = [
   "English", "Hindi", "Urdu", "Arabic", "Bengali", "Spanish", "French",
   "German", "Italian", "Portuguese", "Russian", "Japanese", "Korean",
   "Mandarin", "Turkish", "Tamil", "Telugu", "Punjabi", "Indonesian", "Dutch",
 ];
+ 
 
-// Created lazily so dotenv has already loaded GEMINI_API_KEY by the time
-// the first request arrives (ES module imports run before dotenv.config()).
 let client;
 const getClient = () => {
   if (!client) client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -43,8 +41,8 @@ export const correctMessage = async (req, res) => {
     }
 
     const result = await getClient().models.generateContent({
-      model: process.env.GEMINI_MODEL, 
-      contents: text.trim(), // user text stays here, never inside the system instruction
+      model: process.env.GEMINI_MODEL,
+      contents: text.trim(), 
       config: {
         systemInstruction: buildInstruction(language),
         responseMimeType: "application/json",

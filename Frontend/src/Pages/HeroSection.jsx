@@ -61,7 +61,7 @@ function HeroSection() {
   }, []);
 
   return (
-    <div className="px-10 py-8">
+    <div className="px-4 sm:px-6 lg:px-10 py-6 sm:py-8 pb-20 md:pb-8">
       <h1 className="text-2xl font-bold mb-6 text-base-content">Your Friends</h1>
 
       {loading && <p className="text-base-content/70 text-sm">Loading friends…</p>}
@@ -76,7 +76,7 @@ function HeroSection() {
         {friends.map((friend) => (
           <div
             key={friend._id}
-            className="w-72 bg-base-200 border border-base-300 rounded-xl px-5 py-4 shadow-sm"
+            className="w-full sm:w-72 bg-base-200 border border-base-300 rounded-xl px-5 py-4 shadow-sm"
           >
             <div className="flex items-center gap-3 mb-3">
               <img

@@ -51,7 +51,7 @@ export default function useAiCoach() {
 
       if (!res.ok) {
         setError(
-          data.message || "AI coach isn't available right now. Try again."
+          data.message || `Server error (${res.status}). Try again later.`
         );
         return;
       }

@@ -101,11 +101,11 @@ function Friends() {
   }, [friends, query]);
 
   return (
-    <div className="flex min-h-screen bg-base-100 text-base-content">
+    <div className="flex flex-col md:flex-row min-h-screen bg-base-100 text-base-content">
       <SideBar />
 
-      <div className="flex-1 flex justify-center">
-        <div className="w-full max-w-xl border-x border-base-300 min-h-screen flex flex-col">
+      <div className="flex-1 flex justify-center pb-20 md:pb-8">
+        <div className="w-full max-w-xl border-x-0 md:border-x border-base-300 min-h-screen flex flex-col">
           {/* Header */}
           <div className="px-4 pt-6 pb-3 sticky top-0 bg-base-100 z-10">
             <h1 className="text-2xl font-bold mb-4">Friends</h1>

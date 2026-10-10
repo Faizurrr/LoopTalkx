@@ -105,10 +105,10 @@ function Notifications() {
 
 
   return (
-    <div className="flex min-h-screen bg-base-100 text-base-content">
+    <div className="flex flex-col md:flex-row min-h-screen bg-base-100 text-base-content">
       <SideBar />
 
-      <main className="flex-1 px-10 py-8">
+      <main className="flex-1 px-4 sm:px-6 lg:px-10 py-6 sm:py-8 pb-20 md:pb-8">
         <h1 className="text-2xl font-semibold mb-8 text-base-content">Notifications</h1>
 
         <section>
@@ -154,7 +154,7 @@ function Notifications() {
             {friendRequests.map((req) => (
               <div
                 key={req._id}
-                className="flex items-center justify-between bg-base-200 border border-base-300 rounded-2xl px-5 py-4 shadow-sm"
+                className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-base-200 border border-base-300 rounded-2xl px-5 py-4 shadow-sm"
               >
                 <div className="flex items-center gap-4">
                   <img

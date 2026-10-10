@@ -1,41 +1,30 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { IoLogoInstagram } from "react-icons/io";
 import { RiTwitterXLine } from "react-icons/ri";
 import { TbBrandMeta } from "react-icons/tb";
 import { FiPhoneCall } from "react-icons/fi";
 import { FaGithub, FaLinkedinIn } from "react-icons/fa";
 import { ToastContainer } from "react-toastify";
-import { useLocation } from "react-router-dom";
 
 const Footer = () => {
-   const { pathname } = useLocation();
+  const { pathname } = useLocation();
 
   if (pathname.startsWith("/chat/")) return null;
+
   return (
-   
     <footer className="border-t border-base-300 bg-base-200 text-base-content/80">
       <ToastContainer position="top-right" autoClose={3000} />
-      <div className="mx-auto max-w-7xl px-4 py-12 lg:px-8">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-4">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:py-12 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
           <div>
             <h3 className="mb-4 text-lg font-semibold text-primary">LoopTalk</h3>
             <p className="mb-4 text-sm leading-6 text-base-content/70">
-              Real-time video, instant chat, and AI-powered Second Brain in one connected workspace.
+              Chat, call, and learn from native speakers, with instant AI feedback on every message.
             </p>
             <p className="text-sm font-medium text-base-content">
               Connect instantly. Remember everything.
             </p>
-          </div>
-
-          <div>
-            <h3 className="mb-4 text-lg font-semibold text-primary">Product</h3>
-            <ul className="space-y-2 text-sm text-base-content/70">
-              <li><Link to="/chat" className="transition hover:text-primary">Chat</Link></li>
-              <li><Link to="/rooms" className="transition hover:text-primary">Rooms</Link></li>
-              <li><Link to="/brain" className="transition hover:text-primary">Second Brain</Link></li>
-              <li><Link to="/calls" className="transition hover:text-primary">Video Calls</Link></li>
-            </ul>
           </div>
 
           <div>
@@ -79,7 +68,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-base-300 pt-6">
+        <div className="mt-8 sm:mt-12 border-t border-base-300 pt-6">
           <p className="text-center text-sm text-base-content/60">
             © {new Date().getFullYear()} LoopTalk. All rights reserved.
           </p>

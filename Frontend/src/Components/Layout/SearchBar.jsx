@@ -121,7 +121,7 @@ export default function SearchBar() {
   const showDropdown = open && query.trim().length > 0;
 
   return (
-    <div ref={wrapperRef} className="relative w-full max-w-xs">
+    <div ref={wrapperRef} className="relative w-full max-w-[120px] sm:max-w-xs">
       <label className="input input-bordered input-sm flex items-center gap-2">
         <Search className="h-4 w-4 opacity-60" />
         <input

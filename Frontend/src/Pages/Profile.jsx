@@ -155,9 +155,9 @@ export default function Profile() {
   const displayName = user?.fullname ||  user?.username || "";
 
   return (
-    <div className="flex min-h-screen bg-base-100 text-base-content">
+    <div className="flex flex-col md:flex-row min-h-screen bg-base-100 text-base-content">
       <SideBar />
-      <div className="flex-1 px-4 pb-10 pt-20">
+      <div className="flex-1 px-3 sm:px-6 pb-24 md:pb-10 pt-6 sm:pt-20">
       <div className="mx-auto w-full max-w-2xl overflow-hidden rounded-2xl border border-base-300 bg-base-200 shadow-xl">
         {/* Cover banner */}
         <div className="h-28 bg-gradient-to-r from-primary/30 via-base-300 to-secondary/30 sm:h-32" />

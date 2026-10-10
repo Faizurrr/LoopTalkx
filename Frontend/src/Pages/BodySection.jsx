@@ -97,7 +97,7 @@ function BodySection() {
     );
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6 pb-20 md:pb-8">
       <h1 className="text-2xl font-bold text-base-content mb-1">Meet New Learners</h1>
       <p className="text-base-content/70 mb-6">
         Discover perfect language exchange partners based on your profile

@@ -15,6 +15,10 @@ import Friends from "./Pages/Friends.jsx" ;
 import { useThemeStore } from "./store/useThemeStore.js";
 import ChatPage from "./Pages/ChatPage.jsx";
 import CallPage from "./Pages/CallPage.jsx";
+import About from "./Pages/About.jsx";
+import Docs from "./Pages/Docs.jsx";
+import Privacy from "./Pages/Privacy.jsx";
+import Terms from "./Pages/Terms.jsx";
    // logic of conditional routing..
 
 // Route guard for pages requiring login AND completed onboarding (Home, Profile, etc.)
@@ -172,6 +176,12 @@ function AppRoutes() {
           </PublicOnlyRoute>
         }
       />
+
+      {/* Public info pages */}
+      <Route path="/about" element={<><Navbar /><About /></>} />
+      <Route path="/docs" element={<><Navbar /><Docs /></>} />
+      <Route path="/privacy" element={<><Navbar /><Privacy /></>} />
+      <Route path="/terms" element={<><Navbar /><Terms /></>} />
 
       {/* Catch-all redirect */}
       <Route path="*" element={<Navigate to="/" replace />} />

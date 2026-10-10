@@ -82,14 +82,13 @@ export default function Navbar() {
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">    
         <div className="flex w-full items-center justify-between gap-4">
           {/* Left Side: Logo */}
-          <div className="flex items-center gap-2.5">
-          
-          <div className="flex items-center gap-2 px-2 ">
-                  <ShipWheel className="w-6 h-6 stroke-[2.2]" />
-                  <span className="text-xl font-bold tracking-wide ">
-                    LoopTalk
-                  </span>
-                </div>
+          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+            <div className="flex items-center gap-1.5 sm:gap-2 px-1 sm:px-2">
+              <ShipWheel className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2] text-primary" />
+              <span className="text-base sm:text-xl font-bold tracking-wide">
+                LoopTalk
+              </span>
+            </div>
           </div>
 
           {/* Right Side: Search Bar + Actions */}

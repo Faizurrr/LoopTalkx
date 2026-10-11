@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useNotifications } from "../../context/NotificationContext";
 import {
   Disclosure,
   Menu,
@@ -25,6 +26,8 @@ const userLinks = [
 ];
 
 export default function Navbar() {
+  const { friendRequests } = useNotifications();
+    const count = friendRequests.length;
   const [avatar, setAvatar] = useState(null);
   const authenticated = isAuthenticated();
 
@@ -97,12 +100,19 @@ export default function Navbar() {
 
            {authenticated ? (
               <>
-              {/* Notifications Bell */}
+    
                 <Link to="/notification">
+                <div className="indicator">
+    {count > 0 && (
+      <span className="indicator-item badge badge-error badge-xs">
+        {count > 9 ? "9+" : count}
+      </span>
+    )}
                   <button type="button" className="btn btn-ghost btn-circle">
                     <span className="sr-only">View notifications</span>
                     <Bell className="h-6 w-6 text-base-content opacity-70" />
                   </button>
+                  </div>
                 </Link>
 
                 {/* Profile Dropdown with Sign Out */}

@@ -1,10 +1,11 @@
 import FriendRequest from "../models/friendrequest.model.js";
 import User from '../models/user.model.js';
+import { sendToUser } from "./notifications.controller.js";
 
 export const sendFriendRequest = async (req, res) => {
   try {
     const senderId = req.user._id || req.user.id; // Logged-in user sending request
-    const { receiverId } = req.body;               // ID of recipient from body or params
+    const { receiverId } = req.body;               
 
     // Step 1: Prevent sending a request to oneself
     if (senderId.toString() === receiverId) {
@@ -46,12 +47,21 @@ export const sendFriendRequest = async (req, res) => {
       }
     }
 
+
+
     // Step 4: Create new pending request
     const newRequest = await FriendRequest.create({
       sender: senderId,
       receiver: receiverId,
       status: 'pending',
     });
+
+    // Step 5: Push real-time SSE notification to the receiver
+    const populated = await newRequest.populate(
+      'sender',
+      'fullname username email avatar bio NativeLanguage LearningLanguage city isOnline'
+    );
+    sendToUser(receiverId, 'friend-request:new', populated);
 
     return res.status(201).json({
       success: true,

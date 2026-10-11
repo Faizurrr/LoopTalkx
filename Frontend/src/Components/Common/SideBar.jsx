@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React from "react";
 import { House, Users, Bell } from "lucide-react";
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from "react-router-dom";
+import { useNotifications } from "../../context/NotificationContext";
 
 function SideBar() {
   const location = useLocation();
+  const { friendRequests } = useNotifications();
+  const count = friendRequests.length;
 
   const navItems = [
-    { name: 'Home', icon: House, href: '/' },
-    { name: 'Friends', icon: Users, href: '/friends' },
-    { name: 'Notifications', icon: Bell, href: '/notification' },
+    { name: "Home", icon: House, href: "/" },
+    { name: "Friends", icon: Users, href: "/friends" },
+    { name: "Notifications", icon: Bell, href: "/notification", badge: count },
   ];
 
   return (
@@ -25,11 +28,18 @@ function SideBar() {
                   to={item.href}
                   className={`w-full flex items-center justify-center md:justify-start gap-2 md:gap-3 px-3 py-2 md:px-3.5 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition-all duration-200 ${
                     isActive
-                      ? 'bg-primary/20 text-primary shadow-inner border border-primary/30'
-                      : 'text-base-content/70 hover:text-base-content hover:bg-base-300/50'
+                      ? "bg-primary/20 text-primary shadow-inner border border-primary/30"
+                      : "text-base-content/70 hover:text-base-content hover:bg-base-300/50"
                   }`}
                 >
-                  <Icon className="w-5 h-5 shrink-0" />
+                  <div className="indicator">
+                    {item.badge > 0 && (
+                      <span className="indicator-item badge badge-error badge-xs">
+                        {item.badge > 9 ? "9+" : item.badge}
+                      </span>
+                    )}
+                    <Icon className="w-5 h-5 shrink-0" />
+                  </div>
                   <span className="hidden sm:inline md:inline">{item.name}</span>
                 </Link>
               </li>

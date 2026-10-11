@@ -1,7 +1,6 @@
-   // import all required page ... 
 import React, { useState, useEffect } from "react";
 import { Routes, Route, BrowserRouter, Navigate, useLocation } from "react-router-dom";
-import Home from './Pages/Home';
+import Home from "./Pages/Home";
 import Footer from "./Components/Common/Footer";
 import Navbar from "./Components/Common/Navbar";
 import RegisterPage from "./Pages/register";
@@ -11,7 +10,7 @@ import OnBoardingPage from "./Pages/OnBoardingPage";
 import { isAuthenticated } from "./Helper/Auth.jsx";
 import { isOnboarded } from "./Helper/Onboard.jsx";
 import Notifications from "./Pages/Notifications.jsx";
-import Friends from "./Pages/Friends.jsx" ;
+import Friends from "./Pages/Friends.jsx";
 import { useThemeStore } from "./store/useThemeStore.js";
 import ChatPage from "./Pages/ChatPage.jsx";
 import CallPage from "./Pages/CallPage.jsx";
@@ -19,47 +18,31 @@ import About from "./Pages/About.jsx";
 import Docs from "./Pages/Docs.jsx";
 import Privacy from "./Pages/Privacy.jsx";
 import Terms from "./Pages/Terms.jsx";
-   // logic of conditional routing..
+import { NotificationProvider } from "./context/NotificationContext";
 
-// Route guard for pages requiring login AND completed onboarding (Home, Profile, etc.)
-function ProtectedRoute({ children ,  showNavbar = true }) {
-  const authenticated = isAuthenticated();
-  const onboarded = isOnboarded();
-
-  if (!authenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (!onboarded) {
-    return <Navigate to="/onBoarding" replace />;
-  }
+// needs login + onboarding done
+function ProtectedRoute({ children, showNavbar = true }) {
+  if (!isAuthenticated()) return <Navigate to="/login" replace />;
+  if (!isOnboarded()) return <Navigate to="/onBoarding" replace />;
 
   return (
     <>
-        {showNavbar && <Navbar />}
+      {showNavbar && <Navbar />}
       {children}
     </>
   );
 }
 
-// Route guard for onboarding page / profile editing (requires authentication)
+// onboarding page, only login needed
 function OnboardingRoute({ children }) {
-  const authenticated = isAuthenticated();
-
-  if (!authenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
+  if (!isAuthenticated()) return <Navigate to="/login" replace />;
   return children;
 }
 
-// Route guard for login/register pages (only accessible when NOT logged in)
+// login/register, only for logged out users
 function PublicOnlyRoute({ children }) {
-  const authenticated = isAuthenticated();
-  const onboarded = isOnboarded();
-
-  if (authenticated) {
-    return onboarded ? <Navigate to="/" replace /> : <Navigate to="/onBoarding" replace />;
+  if (isAuthenticated()) {
+    return isOnboarded() ? <Navigate to="/" replace /> : <Navigate to="/onBoarding" replace />;
   }
 
   return (
@@ -74,10 +57,9 @@ function AppRoutes() {
   const location = useLocation();
   const [authState, setAuthState] = useState(0);
 
+  // re-render when login/logout happens
   useEffect(() => {
-    const handleAuthChange = () => {
-      setAuthState((prev) => prev + 1);
-    };
+    const handleAuthChange = () => setAuthState((prev) => prev + 1);
 
     window.addEventListener("auth-change", handleAuthChange);
     window.addEventListener("storage", handleAuthChange);
@@ -88,114 +70,60 @@ function AppRoutes() {
     };
   }, []);
 
+  const canPoll = isAuthenticated() && isOnboarded();
+
+  // provider is outside Routes because Routes key changes on every page
   return (
-    <Routes key={`${location.pathname}-${authState}`}>
-      {/* Home: authenticated + onboarded */}
-      <Route
-        path="/"
-        element={
-          <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
-        }
-      />
+    <NotificationProvider enabled={canPoll}>
+      <Routes key={`${location.pathname}-${authState}`}>
+        <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
 
-      {/* Profile: authenticated + onboarded */}
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <ProfilePage />
-          </ProtectedRoute>
-        }
-      />
-      <Route path="/Profile" element={<Navigate to="/profile" replace />} />
+        <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        <Route path="/Profile" element={<Navigate to="/profile" replace />} />
 
+        <Route path="/notification" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+        <Route path="/notifications" element={<Navigate to="/notification" replace />} />
 
+        <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
 
-      <Route
-        path="/notification"
-        element={
-          <ProtectedRoute>
-            <Notifications />
-          </ProtectedRoute>
-        }
-      />
-      <Route path="/notifications" element={<Navigate to="/notification" replace />} />
-      <Route
-        path="/friends"
-        element={
-          <ProtectedRoute>
-            <Friends />
-          </ProtectedRoute>
-        }
-      />
-         // protected Chat page....
-             <Route
-        path="/chat/:id"
-        element={
-          <ProtectedRoute showNavbar={false}>
-            <ChatPage />
-          </ProtectedRoute>
-        }
-      />
-       // protected call page
-       <Route
-        path="/call/:id"
-        element={
-          <ProtectedRoute showNavbar={false}>
-            <CallPage />
-          </ProtectedRoute>
-        }
-      />
+        {/* chat and call pages have no navbar */}
+        <Route
+          path="/chat/:id"
+          element={
+            <ProtectedRoute showNavbar={false}>
+              <ChatPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/call/:id"
+          element={
+            <ProtectedRoute showNavbar={false} >
+              <CallPage />
+            </ProtectedRoute>
+          }
+        />
 
+        <Route path="/onBoarding" element={<OnboardingRoute><OnBoardingPage /></OnboardingRoute>} />
+        <Route path="/onboarding" element={<Navigate to="/onBoarding" replace />} />
 
+        <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
+        <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
 
-      {/* Onboarding: authenticated + not onboarded */}
-      <Route
-        path="/onBoarding"
-        element={
-          <OnboardingRoute>
-            <OnBoardingPage />
-          </OnboardingRoute>
-        }
-      />
-      <Route path="/onboarding" element={<Navigate to="/onBoarding" replace />} />
+        {/* public pages */}
+        <Route path="/about" element={<><Navbar /><About /></>} />
+        <Route path="/docs" element={<><Navbar /><Docs /></>} />
+        <Route path="/privacy" element={<><Navbar /><Privacy /></>} />
+        <Route path="/terms" element={<><Navbar /><Terms /></>} />
 
-      {/* Login: unauthenticated only */}
-      <Route
-        path="/login"
-        element={
-          <PublicOnlyRoute>
-            <LoginPage />
-          </PublicOnlyRoute>
-        }
-      />
-
-      {/* Register: unauthenticated only */}
-      <Route
-        path="/register"
-        element={
-          <PublicOnlyRoute>
-            <RegisterPage />
-          </PublicOnlyRoute>
-        }
-      />
-
-      {/* Public info pages */}
-      <Route path="/about" element={<><Navbar /><About /></>} />
-      <Route path="/docs" element={<><Navbar /><Docs /></>} />
-      <Route path="/privacy" element={<><Navbar /><Privacy /></>} />
-      <Route path="/terms" element={<><Navbar /><Terms /></>} />
-
-      {/* Catch-all redirect */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </NotificationProvider>
   );
 }
 
 function App() {
-  const { theme } = useThemeStore();
+  const { theme } = useThemeStore(); // get the current theme from Zustand store
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);

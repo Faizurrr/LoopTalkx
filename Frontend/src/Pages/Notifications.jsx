@@ -10,35 +10,74 @@ function Notifications() {
   const [acceptingId, setAcceptingId] = useState(null);
   const[rejectingId , setRejectingId] = useState(null);
 
-  useEffect(() => {
-    const fetchFriendRequests = async () => {
-      try {
-        const token = localStorage.getItem("token");
 
-        const response = await fetch(`${backendUrl}/api/friendrequest/get`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
-          },
-          credentials: "include",
-        });
 
-        if (!response.ok) {
-          throw new Error("Couldn't load friend requests");
-        }
+useEffect(() => {
+  let isMounted = true;
+  let controller = null;
 
-        const data = await response.json();
-        setFriendRequests(data.data || []);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+  const fetchFriendRequests = async (isFirstLoad = false) => {
+    // skip if the previous request is still running .. if server is slow and its take more than 15 sec to respond then we will have multiple request running in parallel which is not good
+    if (controller) return;
+    controller = new AbortController();
+
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(`${backendUrl}/api/friendrequest/get`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
+        },
+        credentials: "include",
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error("Couldn't load friend requests");
       }
-    };
 
-    fetchFriendRequests();
-  }, []);
+      const data = await response.json();
+      if (isMounted) {
+        setFriendRequests(data.data || []);
+        setError(null); // clear old error after a successful fetch
+      }
+    } catch (err) {
+      if (err.name === "AbortError") return;
+      // only show an error on the first load; a failed background poll
+      // shouldn't wipe the UI, the next poll will just retry
+      if (isMounted && isFirstLoad) setError(err.message);
+    } finally {
+      controller = null;
+      if (isMounted && isFirstLoad) setLoading(false);
+    }
+  };
+
+  // initial fetch
+  fetchFriendRequests(true);
+
+  // poll every 15 seconds, but only when the tab is visible
+  const intervalId = setInterval(() => {
+    if (document.visibilityState === "visible") {
+      fetchFriendRequests();
+    }
+  }, 15000);
+
+  // fetch immediately when the user returns to the tab
+  const handleVisibility = () => {
+    if (document.visibilityState === "visible") fetchFriendRequests();
+  };
+  document.addEventListener("visibilitychange", handleVisibility);
+
+  // cleanup when leaving the Notifications page
+  return () => {
+    isMounted = false;
+    clearInterval(intervalId);
+    document.removeEventListener("visibilitychange", handleVisibility);
+    if (controller) controller.abort();
+  };
+}, []);
 
 
     // this fn logic to accept friend request....

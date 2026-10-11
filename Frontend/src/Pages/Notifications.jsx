@@ -1,83 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import SideBar from "../Components/Common/SideBar";
+import { useNotifications } from "../context/NotificationContext";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5003";
 
 function Notifications() {
-  const [friendRequests, setFriendRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // Use the shared context state so the navbar bell badge stays in sync
+  const { friendRequests, setFriendRequests, loading, error: contextError } = useNotifications();
   const [acceptingId, setAcceptingId] = useState(null);
-  const[rejectingId , setRejectingId] = useState(null);
-
-
-
-useEffect(() => {
-  let isMounted = true;
-  let controller = null;
-
-  const fetchFriendRequests = async (isFirstLoad = false) => {
-    // skip if the previous request is still running .. if server is slow and its take more than 15 sec to respond then we will have multiple request running in parallel which is not good
-    if (controller) return;
-    controller = new AbortController();
-
-    try {
-      const token = localStorage.getItem("token");
-
-      const response = await fetch(`${backendUrl}/api/friendrequest/get`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token && { Authorization: `Bearer ${token}` }),
-        },
-        credentials: "include",
-        signal: controller.signal,
-      });
-
-      if (!response.ok) {
-        throw new Error("Couldn't load friend requests");
-      }
-
-      const data = await response.json();
-      if (isMounted) {
-        setFriendRequests(data.data || []);
-        setError(null); // clear old error after a successful fetch
-      }
-    } catch (err) {
-      if (err.name === "AbortError") return;
-      // only show an error on the first load; a failed background poll
-      // shouldn't wipe the UI, the next poll will just retry
-      if (isMounted && isFirstLoad) setError(err.message);
-    } finally {
-      controller = null;
-      if (isMounted && isFirstLoad) setLoading(false);
-    }
-  };
-
-  // initial fetch
-  fetchFriendRequests(true);
-
-  // poll every 15 seconds, but only when the tab is visible
-  const intervalId = setInterval(() => {
-    if (document.visibilityState === "visible") {
-      fetchFriendRequests();
-    }
-  }, 15000);
-
-  // fetch immediately when the user returns to the tab
-  const handleVisibility = () => {
-    if (document.visibilityState === "visible") fetchFriendRequests();
-  };
-  document.addEventListener("visibilitychange", handleVisibility);
-
-  // cleanup when leaving the Notifications page
-  return () => {
-    isMounted = false;
-    clearInterval(intervalId);
-    document.removeEventListener("visibilitychange", handleVisibility);
-    if (controller) controller.abort();
-  };
-}, []);
+  const [rejectingId, setRejectingId] = useState(null);
+  const [actionError, setActionError] = useState(null);
 
 
     // this fn logic to accept friend request....
@@ -103,8 +35,9 @@ useEffect(() => {
       }
 
       setFriendRequests((prev) => prev.filter((r) => r._id !== requestId));
+      setActionError(null);
     } catch (err) {
-      setError(err.message);
+      setActionError(err.message);
     } finally {
       setAcceptingId(null);
     }
@@ -135,8 +68,9 @@ useEffect(() => {
       }
 
       setFriendRequests((prev) => prev.filter((r) => r._id !== requestId));
+      setActionError(null);
     } catch (err) {
-      setError(err.message);
+      setActionError(err.message);
     } finally {
       setRejectingId(null);
     }
@@ -179,11 +113,11 @@ useEffect(() => {
             <p className="text-base-content/70 text-sm">Loading requests…</p>
           )}
 
-          {!loading && error && (
-            <p className="text-error text-sm">{error}</p>
+          {!loading && (contextError || actionError) && (
+            <p className="text-error text-sm">{actionError || contextError}</p>
           )}
 
-          {!loading && !error && friendRequests.length === 0 && (
+          {!loading && !(contextError || actionError) && friendRequests.length === 0 && (
             <p className="text-base-content/70 text-sm">
               No pending friend requests right now.
             </p>

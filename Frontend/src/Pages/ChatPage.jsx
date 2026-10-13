@@ -26,6 +26,7 @@ import CallButton from "../Components/Common/CallButton";
 import AICoachCard from "../Components/Common/AICoachCard";
 
 import useAiCoach from "../Helper/useAiCoach";
+import { useChatNotifications } from "../context/ChatNotificationContext";
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5003";
@@ -332,6 +333,13 @@ export default function ChatPage() {
   const [channel, setChannel] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const { markChannelRead } = useChatNotifications();
+
+  useEffect(() => {
+    if (targetUserId) {
+      markChannelRead(targetUserId);
+    }
+  }, [targetUserId, markChannelRead]);
 
   useEffect(() => {
     if (!targetUserId || !STREAM_API_KEY) {
@@ -382,10 +390,12 @@ export default function ChatPage() {
         });
 
         await currChannel.watch();
+        await currChannel.markRead();
         if (cancelled) return;
 
         setChatClient(client);
         setChannel(currChannel);
+        markChannelRead(targetUserId);
       } catch (err) {
         console.error("Error initializing chat:", err);
         if (!cancelled) {
@@ -402,14 +412,7 @@ export default function ChatPage() {
     return () => {
       cancelled = true;
     };
-  }, [targetUserId]);
-
-  useEffect(() => {
-    return () => {
-      const client = StreamChat.getInstance(STREAM_API_KEY);
-      client.disconnectUser?.();
-    };
-  }, []);
+  }, [targetUserId, markChannelRead]);
 
   const handleVideoCall = async () => {
     if (!channel) return;

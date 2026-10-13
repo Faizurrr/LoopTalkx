@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { generateStreamToken, upsertStreamUser } from "../lib/stream.js";
+import { generateStreamToken, upsertStreamUser, upsertChatPushTemplate } from "../lib/stream.js";
 import User from "../models/user.model.js";
 
 // Works whichever field names your User model uses
@@ -53,5 +53,25 @@ export async function syncUser(req, res) {
     return res
       .status(500)
       .json({ success: false, message: error.message || "Internal Server Error" });
+  }
+}
+
+// POST /api/chat/push-template
+
+export async function updatePushTemplate(req, res) {
+  try {
+    const { push_provider_type, push_provider_name, template } = req.body || {};
+    const result = await upsertChatPushTemplate({
+      pushProviderType: push_provider_type,
+      pushProviderName: push_provider_name,
+      template,
+    });
+    return res.status(200).json({ success: true, data: result });
+  } catch (error) {
+    console.error("Error setting push template:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Internal Server Error",
+    });
   }
 }

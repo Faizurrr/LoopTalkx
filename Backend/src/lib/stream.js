@@ -48,3 +48,53 @@ export const upsertStreamUser = async ({ id, name, image }) => {
 export const generateStreamToken = (userId) => {
   return getClient().createToken(String(userId));
 };
+
+export const getStreamClient = () => getClient();
+
+
+// (https://getstream.io/chat/docs/node/push-template/)
+export const upsertChatPushTemplate = async ({
+  pushProviderType = "firebase",
+  pushProviderName = "",
+  template,
+} = {}) => {
+  const client = getClient();
+  const defaultTemplate = JSON.stringify({
+    data: {
+      version: "v2",
+      sender: "stream.chat",
+      type: "{{ event_type }}",
+      id: "{{ message.id }}",
+      message_id: "{{ message.id }}",
+      channel_type: "{{ channel.type }}",
+      channel_id: "{{ channel.id }}",
+      cid: "{{ channel.cid }}",
+      receiver_id: "{{ receiver.id }}",
+    },
+    android: {
+      priority: "high",
+    },
+    apns: {
+      payload: {
+        aps: {
+          alert: {
+            title: "New message from {{ sender.name }}",
+            body: "{{ truncate message.text 150 }}",
+          },
+          badge: "{{ unread_count }}",
+          sound: "default",
+          "mutable-content": 1,
+          "content-available": 0,
+        },
+      },
+    },
+  });
+
+  return await client.upsertPushTemplate({
+    enable_push: true,
+    event_type: "message.new",
+    push_provider_type: pushProviderType,
+    ...(pushProviderName ? { push_provider_name: pushProviderName } : {}),
+    template: template || defaultTemplate,
+  });
+};

@@ -2,15 +2,17 @@ import React from "react";
 import { House, Users, Bell } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useNotifications } from "../../context/NotificationContext";
+import { useChatNotifications } from "../../context/ChatNotificationContext";
 
 function SideBar() {
   const location = useLocation();
   const { friendRequests } = useNotifications();
+  const { totalUnreadCount } = useChatNotifications();
   const count = friendRequests.length;
 
   const navItems = [
     { name: "Home", icon: House, href: "/" },
-    { name: "Friends", icon: Users, href: "/friends" },
+    { name: "Friends", icon: Users, href: "/friends", badge: totalUnreadCount },
     { name: "Notifications", icon: Bell, href: "/notification", badge: count },
   ];
 

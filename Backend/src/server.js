@@ -66,8 +66,7 @@ app.use('/api/friendslist', Friendrouter);
 app.use('/api/chat', Chatrouter);
 app.use("/api/user", searchrouter);
 app.use("/api/ai", airouter);
-app.use("/api/notifications", notificationRouter);
-
+app.use("/api/notifications", notificationRouter); // friend request notifications route
 
 // ─── 404 Handler 
 app.use((_req, res) => {

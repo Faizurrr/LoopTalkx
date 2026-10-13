@@ -68,7 +68,7 @@ export function NotificationProvider({ children, enabled }) {
     fetchFriendRequests(true);
 
     // 2. Open the SSE stream with the Bearer token in the header
-    //    (native EventSource cannot send custom headers — fetchEventSource can)
+
     fetchEventSource(`${backendUrl}/api/notifications/stream`, {
       headers: { Authorization: `Bearer ${token}` },
       credentials: "include",
@@ -79,6 +79,10 @@ export function NotificationProvider({ children, enabled }) {
         // 4xx (except 429) means the token is bad — stop retrying immediately
         if (res.status >= 400 && res.status < 500 && res.status !== 429) {
           throw new FatalError("SSE unauthorized");
+        }
+        // 5xx or any other non-OK — let fetchEventSource retry automatically
+        if (!res.ok) {
+          throw new Error(`SSE server error (${res.status})`);
         }
         // Reconnected after a drop: refetch to catch any missed events
         if (hasOpened) fetchFriendRequests();
@@ -91,6 +95,18 @@ export function NotificationProvider({ children, enabled }) {
           setFriendRequests((prev) =>
             prev.some((r) => r._id === req._id) ? prev : [req, ...prev]
           );
+        }
+
+        // Another tab accepted a request — remove it from our list
+        if (msg.event === "friend-request:accepted") {
+          const { _id } = JSON.parse(msg.data);
+          setFriendRequests((prev) => prev.filter((r) => r._id !== _id));
+        }
+
+        // Another tab rejected a request — remove it from our list
+        if (msg.event === "friend-request:rejected") {
+          const { _id } = JSON.parse(msg.data);
+          setFriendRequests((prev) => prev.filter((r) => r._id !== _id));
         }
       },
 

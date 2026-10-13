@@ -115,6 +115,9 @@ export const acceptFriendRequest = async (req, res) => {
     friendRequest.status = 'accepted';
     await friendRequest.save();
 
+    // Step 5: Push SSE event so all tabs of this user remove the request from the badge
+    sendToUser(currentUserId, 'friend-request:accepted', { _id: requestId });
+
     return res.status(200).json({
       success: true,
       message: 'Friend request accepted successfully!',
@@ -173,6 +176,9 @@ export const rejectFriendRequest = async (req, res) => {
     // Step 4: Update request status to "rejected"
     friendRequest.status = 'rejected';
     await friendRequest.save();
+
+    // Step 5: Push SSE event so all tabs of this user remove the request from the badge
+    sendToUser(currentUserId, 'friend-request:rejected', { _id: requestId });
 
     return res.status(200).json({
       success: true,

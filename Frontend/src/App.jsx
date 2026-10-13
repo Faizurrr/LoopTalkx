@@ -19,6 +19,8 @@ import Docs from "./Pages/Docs.jsx";
 import Privacy from "./Pages/Privacy.jsx";
 import Terms from "./Pages/Terms.jsx";
 import { NotificationProvider } from "./context/NotificationContext";
+import { ChatNotificationProvider } from "./context/ChatNotificationContext";
+import { Toaster } from "react-hot-toast";
 
 // needs login + onboarding done
 function ProtectedRoute({ children, showNavbar = true }) {
@@ -75,49 +77,52 @@ function AppRoutes() {
   // provider is outside Routes because Routes key changes on every page
   return (
     <NotificationProvider enabled={canPoll}>
-      <Routes key={`${location.pathname}-${authState}`}>
-        <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+      <ChatNotificationProvider enabled={canPoll}>
+        <Toaster position="top-right" toastOptions={{ duration: 4000 }} />
+        <Routes key={`${location.pathname}-${authState}`}>
+          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
 
-        <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-        <Route path="/Profile" element={<Navigate to="/profile" replace />} />
+          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="/Profile" element={<Navigate to="/profile" replace />} />
 
-        <Route path="/notification" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
-        <Route path="/notifications" element={<Navigate to="/notification" replace />} />
+          <Route path="/notification" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+          <Route path="/notifications" element={<Navigate to="/notification" replace />} />
 
-        <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
+          <Route path="/friends" element={<ProtectedRoute><Friends /></ProtectedRoute>} />
 
-        {/* chat and call pages have no navbar */}
-        <Route
-          path="/chat/:id"
-          element={
-            <ProtectedRoute showNavbar={false}>
-              <ChatPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/call/:id"
-          element={
-            <ProtectedRoute showNavbar={false} >
-              <CallPage />
-            </ProtectedRoute>
-          }
-        />
+          {/* chat and call pages have no navbar */}
+          <Route
+            path="/chat/:id"
+            element={
+              <ProtectedRoute showNavbar={false}>
+                <ChatPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/call/:id"
+            element={
+              <ProtectedRoute showNavbar={false} >
+                <CallPage />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route path="/onBoarding" element={<OnboardingRoute><OnBoardingPage /></OnboardingRoute>} />
-        <Route path="/onboarding" element={<Navigate to="/onBoarding" replace />} />
+          <Route path="/onBoarding" element={<OnboardingRoute><OnBoardingPage /></OnboardingRoute>} />
+          <Route path="/onboarding" element={<Navigate to="/onBoarding" replace />} />
 
-        <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
-        <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
+          <Route path="/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
+          <Route path="/register" element={<PublicOnlyRoute><RegisterPage /></PublicOnlyRoute>} />
 
-        {/* public pages */}
-        <Route path="/about" element={<><Navbar /><About /></>} />
-        <Route path="/docs" element={<><Navbar /><Docs /></>} />
-        <Route path="/privacy" element={<><Navbar /><Privacy /></>} />
-        <Route path="/terms" element={<><Navbar /><Terms /></>} />
+          {/* public pages */}
+          <Route path="/about" element={<><Navbar /><About /></>} />
+          <Route path="/docs" element={<><Navbar /><Docs /></>} />
+          <Route path="/privacy" element={<><Navbar /><Privacy /></>} />
+          <Route path="/terms" element={<><Navbar /><Terms /></>} />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </ChatNotificationProvider>
     </NotificationProvider>
   );
 }

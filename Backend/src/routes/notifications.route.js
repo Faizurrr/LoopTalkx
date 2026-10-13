@@ -6,6 +6,6 @@ const notificationRouter = express.Router();
 
 
 
-notificationRouter.get("/stream", protect, sseConnect);
-
+notificationRouter.get("/stream", protect, sseConnect);  //  SSE connection to receive real-time notifications(friend requests)
+  
 export  default notificationRouter;
